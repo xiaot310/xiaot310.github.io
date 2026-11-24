@@ -1,8 +1,31 @@
 {
   "researchRoot": "../..",
-  "roots": ["论文", "项目", "课程", "助教"],
-  "exclude": ["个人文件", "奖学金", "身份证", "学历", "学位", "宿舍", "比赛"],
+  "roots": [
+    "论文",
+    "项目",
+    "课程",
+    "助教"
+  ],
+  "exclude": [
+    "个人文件",
+    "奖学金",
+    "身份证",
+    "学历",
+    "学位",
+    "宿舍",
+    "比赛",
+    ".git",
+    "node_modules",
+    "__pycache__",
+    ".pytest_cache",
+    "venv",
+    ".venv",
+    "_archive",
+    "data"
+  ],
   "maxFileMB": 30,
   "latexUrl": "",
-  "drawUrl": ""
+  "drawUrl": "",
+  "maxFiles": 800,
+  "port": 8765
 }

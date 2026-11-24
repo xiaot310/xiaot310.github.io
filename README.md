@@ -1,5 +1,8 @@
 # 张义廷 · 研究工作台
 
+线上：https://xiaot310.github.io/  
+仓库：https://github.com/xiaot310/xiaot310.github.io
+
 个人研究主页 + 本地工作台。公开层是纯静态页面，可以部署到 GitHub Pages；
 本地层只在本机运行，用来打开文件、LaTeX、画图、查文献和管理计划。
 
