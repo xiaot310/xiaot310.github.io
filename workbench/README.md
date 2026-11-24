@@ -51,7 +51,7 @@ xiaot310-site/                     ← 站点根目录（静态服务根）
 
 - **站点根目录** = `workbench/` 的父目录，服务器只服务这个目录里的静态文件。
 - **研究工作区（researchRoot）** 默认是站点根目录的上一级再上一级，即
-  `D:\工作\研究生`（站点在 `D:\工作\研究生\agent\xiaot310-site`）。
+  `你的研究工作区`（站点在 `你的研究工作区\agent\xiaot310-site`）。
 - 只有 `researchRoot` 下面的 `roots` 白名单目录会被扫描成「最近文件」。
 
 ## 3. 私有配置 private.json
@@ -76,7 +76,7 @@ notepad workbench\private.json
 
 | 字段 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `researchRoot` | 字符串 | `"../.."` | 研究工作区根目录。相对路径按**站点根目录**解析，也可写绝对路径（如 `D:/工作/研究生`） |
+| `researchRoot` | 字符串 | `"../.."` | 研究工作区根目录。相对路径按**站点根目录**解析，也可写绝对路径（如 `D:/path/to/research`） |
 | `roots` | 数组 | `["论文","项目","课程","助教"]` | 要扫描的子目录（相对 `researchRoot`），也是页面上的「打开 XX 文件夹」按钮 |
 | `exclude` | 数组 | 见下 | 追加排除的目录/文件名；**内置的敏感名单不能通过配置删除** |
 | `maxFileMB` | 数字 | `30` | 单文件大小上限，超过的文件不进列表 |
@@ -87,7 +87,7 @@ notepad workbench\private.json
 
 ~~~json
 {
-  "researchRoot": "D:/工作/研究生",
+  "researchRoot": "D:/path/to/research",
   "roots": ["论文", "项目", "课程", "助教"],
   "exclude": ["个人文件", "奖学金", "身份证", "学历", "学位", "宿舍", "比赛"],
   "maxFileMB": 30,
@@ -126,7 +126,7 @@ curl -s http://127.0.0.1:8765/api/status
 
 ~~~json
 {"ok":true,"name":"Yiting Workbench","version":"1.0.0",
- "root":"D:\\工作\\研究生","site":"D:\\工作\\研究生\\agent\\xiaot310-site",
+ "root":"你的研究工作区","site":"你的研究工作区\\agent\\xiaot310-site",
  "time":"2026-11-24T13:20:00+08:00"}
 ~~~
 
@@ -141,9 +141,9 @@ curl -s "http://127.0.0.1:8765/api/files?q=LLM"
 
 ~~~json
 {"ok":true,
- "root":"D:\\工作\\研究生",
- "roots":[{"name":"论文","path":"D:\\工作\\研究生\\论文"}],
- "files":[{"name":"paper.pdf","path":"D:\\工作\\研究生\\论文\\1.LLM+A\\paper.pdf",
+ "root":"你的研究工作区",
+ "roots":[{"name":"论文","path":"你的研究工作区\\论文"}],
+ "files":[{"name":"paper.pdf","path":"你的研究工作区\\论文\\1.LLM+A\\paper.pdf",
            "rel":"论文/1.LLM+A/paper.pdf","dir":"论文/1.LLM+A","ext":"pdf",
            "size":1048576,"mtime":1763900000,"kind":"pdf","root":"论文"}],
  "total":326,"limit":5,"query":""}
@@ -184,10 +184,10 @@ curl -s http://127.0.0.1:8765/api/tools
 ~~~bash
 curl -s -X POST http://127.0.0.1:8765/api/open \
   -H "Content-Type: application/json" \
-  -d "{\"path\":\"D:/工作/研究生/论文\"}"
+  -d "{\"path\":\"D:/path/to/research/论文\"}"
 ~~~
 
-成功：`{"ok":true,"action":"open","path":"D:\\工作\\研究生\\论文","name":"论文"}`
+成功：`{"ok":true,"action":"open","path":"你的研究工作区\\论文","name":"论文"}`
 
 失败示例：
 
@@ -242,7 +242,7 @@ curl -s -i http://127.0.0.1:8765/go/latex
 - **笔记 / 手绘**：同样在 `localStorage`（`xiaot.notes.v1`、`xiaot.sketch.v1`），
   笔记可下载为 `.md`，手绘可下载为 `.png`。
 - **私有配置**：单独备份 `workbench/private.json`（放本地或密码管理器，不要放进公开仓库）。
-- **研究文件**：`D:\工作\研究生` 下的文件按你自己的习惯备份；本项目不复制、不上传。
+- **研究文件**：`你的研究工作区` 下的文件按你自己的习惯备份；本项目不复制、不上传。
 
 ## 8. 故障排查
 
