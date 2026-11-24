@@ -9,18 +9,19 @@ rem =====================================================================
 setlocal
 cd /d "%~dp0"
 
-where py >nul 2>nul
-if errorlevel 1 goto try_python
-py -3 "workbench\server.py" %*
-goto finished
-
-:try_python
+rem Prefer "python" in PATH; the Windows py launcher may point at a stale install.
 where python >nul 2>nul
-if errorlevel 1 goto no_python
-python "workbench\server.py" %*
-goto finished
+if not errorlevel 1 (
+  python "workbench\server.py" %*
+  goto finished
+)
 
-:no_python
+where py >nul 2>nul
+if not errorlevel 1 (
+  py -3 "workbench\server.py" %*
+  goto finished
+)
+
 echo.
 echo [ERROR] Python 3 was not found in PATH.
 echo Install Python 3.8+ from https://www.python.org/downloads/ and try again.
