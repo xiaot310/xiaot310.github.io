@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 · 页面不在这里</title>
+<style>
+  :root { --paper:#f4f1e9; --ink:#111a21; --muted:#667470; --line:rgba(17,26,33,.14); --accent:#0a6a83; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    background: var(--paper); color: var(--ink);
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background-image: radial-gradient(700px 400px at 80% -10%, rgba(10,106,131,.10), transparent 65%);
+  }
+  .box { width: min(560px, calc(100% - 40px)); padding: 38px; border: 1px solid var(--line); border-radius: 18px; background: rgba(251,249,243,.72); }
+  .mark { font-family: "JetBrains Mono", Consolas, monospace; font-size: 10px; letter-spacing: .18em; color: var(--accent); }
+  h1 { margin: 14px 0 0; font-size: clamp(2rem, 6vw, 3rem); letter-spacing: -.04em; line-height: 1.1; }
+  p { margin: 14px 0 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-size: 12px; }
+  a.primary { background: var(--ink); color: #fff; }
+  a.ghost { border: 1px solid var(--line); color: var(--ink); }
+  code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 11px; color: var(--accent); }
+</style>
+</head>
+<body>
+  <main class="box">
+    <p class="mark">404 / NOT FOUND</p>
+    <h1>这个路径下<br>没有页面。</h1>
+    <p>文件被移动了，或者链接拼错了。这个站点是纯静态的，没有服务端路由；所有页面都对应一个真实的 HTML 文件。</p>
+    <div class="actions">
+      <a class="primary" id="homeLink" href="./">回到首页 →</a>
+      <a class="ghost" href="javascript:history.back()">返回上一页</a>
+    </div>
+    <p style="margin-top:22px">如果首页也打不开，请检查部署路径与文件名大小写；站点不使用 <code>/assets</code> 这类绝对路径。</p>
+  </main>
+  <script>
+    (function () {
+      var base = location.pathname.replace(/\/[^/]*$/, '/');
+      var a = document.getElementById('homeLink');
+      if (a) a.href = base;
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>海冰三轴失效准则 · 张义廷</title>
+<meta name="description" content="四种海冰失效准则的二维包络与三维主应力空间交互演示。拉为正、压为负，实时给出 g 值与判定。">
+<meta name="theme-color" content="#08131c">
+<meta property="og:title" content="海冰三轴失效准则 · 张义廷">
+<meta property="og:description" content="四种失效准则的二维包络与三维主应力空间切片，拖动应力点实时判定。">
+<meta property="og:type" content="website">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+<div id="fatal" hidden=""></div>
+<noscript><div class="noscript">这个实验需要 JavaScript 才能绘制包络与三维切片。</div></noscript>
+
+<header class="topbar">
+  <div class="tb-left">
+    <a class="back" href="../../index.html" title="返回张义廷主页" aria-label="返回首页">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H4m4-4-4 4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </a>
+    <svg class="tb-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <path d="M32 9 51 20v23L32 54 13 43V20z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"></path>
+      <path d="M32 9v22m0 0 19-11M32 31 13 20M32 31v23" stroke="currentColor" stroke-width="1.2" opacity=".55"></path>
+      <circle cx="32" cy="31" r="2.4" fill="currentColor"></circle>
+    </svg>
+    <div class="tb-title">
+      <h1>海冰三轴失效准则</h1>
+      <p>S2 柱状冰 · σ<sub>t</sub> = <b id="hdrSt">0.80</b> · σ<sub>c</sub> = <b id="hdrSc">4.00</b> MPa · 拉为正、压为负</p>
+    </div>
+  </div>
+
+  <div class="mode-switch" role="tablist" aria-label="维度切换">
+    <button type="button" role="tab" data-mode="2d" class="is-active" aria-selected="true">二维 · σ<sub>3</sub>=0</button>
+    <button type="button" role="tab" data-mode="3d" aria-selected="false" class="">三维 · 主应力空间</button>
+    <span class="mode-thumb" id="modeThumb" aria-hidden="true"></span>
+  </div>
+
+  <div class="tb-actions">
+    <button type="button" class="tbtn" id="btnCopy" title="复制当前状态链接（含全部参数）">链接 ⧉</button>
+    <button type="button" class="tbtn" id="btnShot" title="保存当前画面为 PNG（S）">截图</button>
+    <button type="button" class="tbtn" id="btnFull" title="全屏演示（F）">全屏</button>
+    <button type="button" class="tbtn" id="btnHelp" title="使用说明（?）">说明</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="stage" id="stage" aria-label="失效准则绘图区">
+    <canvas id="chart2d"></canvas>
+    <canvas id="scene3d" hidden></canvas>
+
+    <div class="stage-top">
+      <div class="chip chip-mode"><span class="dot"></span><span id="modeChip">平面应力 · σ<sub>3</sub> = 0</span></div>
+      <div class="chip chip-view" id="viewChip">二维包络线</div>
+      <div class="stage-tools">
+        <button type="button" class="ghost-btn" id="btnFit" title="自动适配所有可见包络">适配视窗</button>
+        <button type="button" class="ghost-btn" id="btnResetView" title="复位三维视角（R）" hidden="">复位视角</button>
+      </div>
+    </div>
+
+    <div class="legend" id="legend" aria-label="准则图例与开关"></div>
+
+    <div class="stage-hint" id="stageHint">拖动圆点改变应力状态</div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </section>
+
+  <aside class="panel" id="panel">
+    <section class="card">
+      <div class="card-head">
+        <h2>输入条件</h2>
+        <button type="button" class="mini-btn" id="btnResetParams" title="恢复 σt=0.8、σc=4.0、S=1.0">恢复默认</button>
+      </div>
+
+      <div class="param-row" data-param="st">
+        <div class="pr-head">
+          <span class="pr-sym">σ<sub>t</sub></span>
+          <span class="pr-name">单轴拉伸强度</span>
+          <input class="num" id="stNum" type="number" min="0.20" max="2.00" step="0.01" value="0.80" aria-label="单轴拉伸强度 MPa">
+          <span class="pr-unit">MPa</span>
+        </div>
+        <input class="range" id="stRange" type="range" min="0.20" max="2.00" step="0.01" value="0.80" aria-label="单轴拉伸强度滑块">
+      </div>
+
+      <div class="param-row" data-param="sc">
+        <div class="pr-head">
+          <span class="pr-sym">σ<sub>c</sub></span>
+          <span class="pr-name">单轴压缩强度</span>
+          <input class="num" id="scNum" type="number" min="0.40" max="10.00" step="0.01" value="4.00" aria-label="单轴压缩强度 MPa">
+          <span class="pr-unit">MPa</span>
+        </div>
+        <input class="range" id="scRange" type="range" min="0.40" max="10.00" step="0.01" value="4.00" aria-label="单轴压缩强度滑块">
+      </div>
+
+      <div class="param-row" data-param="S">
+        <div class="pr-head">
+          <span class="pr-sym">S</span>
+          <span class="pr-name">纯剪切强度</span>
+          <input class="num" id="SNum" type="number" min="0.20" max="6.00" step="0.01" value="1.00" aria-label="纯剪切强度 MPa">
+          <span class="pr-unit">MPa</span>
+        </div>
+        <input class="range" id="SRange" type="range" min="0.91" max="6.00" step="0.01" value="1.00" aria-label="纯剪切强度滑块">
+      </div>
+
+      <div class="derived-line" id="paramDerived"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>应力状态</h2>
+        <span class="tag" id="stressTag">平面应力</span>
+      </div>
+
+      <div class="param-row stress-row" data-stress="0">
+        <div class="pr-head">
+          <span class="pr-sym">σ<sub>1</sub></span>
+          <span class="pr-name">第一主应力</span>
+          <input class="num" id="s1Num" type="number" step="0.01" value="0.50" aria-label="第一主应力 MPa" min="-4.6" max="1.28">
+          <span class="pr-unit">MPa</span>
+        </div>
+        <input class="range" id="s1Range" type="range" step="0.01" value="0.5" aria-label="第一主应力滑块" min="-4.6" max="1.28">
+      </div>
+
+      <div class="param-row stress-row" data-stress="1">
+        <div class="pr-head">
+          <span class="pr-sym">σ<sub>2</sub></span>
+          <span class="pr-name">第二主应力</span>
+          <input class="num" id="s2Num" type="number" step="0.01" value="-0.50" aria-label="第二主应力 MPa" min="-4.6" max="1.28">
+          <span class="pr-unit">MPa</span>
+        </div>
+        <input class="range" id="s2Range" type="range" step="0.01" value="-0.5" aria-label="第二主应力滑块" min="-4.6" max="1.28">
+      </div>
+
+      <div class="param-row stress-row is-locked" data-stress="2" id="s3Row">
+        <div class="pr-head">
+          <span class="pr-sym">σ<sub>3</sub></span>
+          <span class="pr-name">第三主应力</span>
+          <input class="num" id="s3Num" type="number" step="0.01" value="0.00" aria-label="第三主应力 MPa" min="-4.6" max="1.28" disabled="">
+          <span class="pr-unit">MPa</span>
+        </div>
+        <input class="range" id="s3Range" type="range" step="0.01" value="0" aria-label="第三主应力滑块" min="-4.6" max="1.28" disabled="">
+      </div>
+
+      <div class="derived-grid">
+        <div><span>平均应力 p</span><b id="derP">0.00</b></div>
+        <div><span>最大剪应力 τ<sub>max</sub></span><b id="derTau">0.00</b></div>
+        <div><span>最危险准则 g<sub>max</sub></span><b id="derG" style="color: rgb(207, 230, 238);">0.00</b></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>破坏判定</h2>
+        <span class="rule">g &lt; 1 安全 · g ≥ 1 失效</span>
+      </div>
+      <div class="verdicts" id="verdicts"></div>
+      <p class="explain" id="explain"></p>
+    </section>
+
+    <section class="card detail" id="detailCard">
+      <div class="card-head">
+        <h2>计算过程</h2>
+        <span class="hint" id="detailHint">点击任一准则</span>
+      </div>
+      <div class="detail-body" id="detailBody"><p class="muted">在右侧判定表中点一行，查看该准则的公式与代入值。</p></div>
+    </section>
+
+    <p class="footnote">
+      教学演示，不构成设计依据。σ<sub>t</sub>、σ<sub>c</sub> 为单轴拉/压强度，S 为纯剪切强度；
+      Tsai–Wu 的柱轴方向按横向各向同性取 F<sub>33</sub>=0.5F<sub>11</sub>、G<sub>3333</sub>=0.25G<sub>11</sub>。
+      曲线因视窗截断时，可点“适配视窗”。
+    </p>
+  </aside>
+</main>
+
+<section class="presets-bar" aria-label="预设工况">
+  <span class="pb-label">工况</span>
+  <div class="preset-list" id="presets"></div>
+  <span class="pb-hint">点击载入 · 链接自动更新</span>
+</section>
+
+<div class="modal" id="helpModal" hidden="">
+  <div class="modal-mask" data-close=""></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <button type="button" class="modal-x" data-close="" aria-label="关闭">×</button>
+    <h2 id="helpTitle">使用说明</h2>
+
+    <div class="help-cols">
+      <div>
+        <h3>怎么用</h3>
+        <ul class="help-list">
+          <li><b>二维</b>：直接拖动图中白色圆点，或在右侧拖动 σ<sub>1</sub>、σ<sub>2</sub> 滑块。σ<sub>3</sub> 锁定为 0，画面是平面应力包络。</li>
+          <li><b>三维</b>：把 σ<sub>1</sub>–σ<sub>2</sub> 包络放回主应力空间，查看 σ<sub>3</sub> 处的切片；拖动旋转、滚轮缩放、右键或 Shift 拖动平移，σ<sub>3</sub> 滑块会移动切片。</li>
+          <li><b>改材料</b>：σ<sub>t</sub>、σ<sub>c</sub>、S 改变后，四种准则的系数、包络与三维切片一起重新标定。</li>
+          <li><b>看判定</b>：点击判定表中的一行，下方显示公式代入过程；图例可单独显示/隐藏准则。</li>
+          <li><b>分享</b>：所有参数都在地址栏 hash 里，点“链接”复制后，别人打开就是同一幅图。</li>
+        </ul>
+      </div>
+      <div>
+        <h3>快捷键</h3>
+        <ul class="help-keys">
+          <li><kbd>D</kbd> 二维 / 三维</li>
+          <li><kbd>1</kbd>–<kbd>4</kbd> 选中准则，<kbd>0</kbd> 取消</li>
+          <li><kbd>←</kbd><kbd>→</kbd> σ<sub>1</sub> ±0.05</li>
+          <li><kbd>↑</kbd><kbd>↓</kbd> σ<sub>2</sub> ±0.05</li>
+          <li><kbd>PgUp</kbd><kbd>PgDn</kbd> σ<sub>3</sub> ±0.05</li>
+          <li><kbd>R</kbd> 复位视角 / 视窗　<kbd>S</kbd> 截图</li>
+          <li><kbd>F</kbd> 全屏　<kbd>?</kbd> 说明　<kbd>Esc</kbd> 关闭</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>四种准则</h3>
+    <div class="help-table">
+      <div class="ht-row ht-head"><span>准则</span><span>等值函数 g（拉为正）</span></div>
+      <div class="ht-row"><span>第一强度理论</span><span>max(σ<sub>max</sub>/σ<sub>t</sub>, −σ<sub>min</sub>/σ<sub>c</sub>)</span></div>
+      <div class="ht-row"><span>Mises</span><span>√[((σ<sub>1</sub>−σ<sub>2</sub>)²+(σ<sub>2</sub>−σ<sub>3</sub>)²+(σ<sub>3</sub>−σ<sub>1</sub>)²)/2] / σ<sub>c</sub></span></div>
+      <div class="ht-row"><span>Mohr–Coulomb</span><span>σ<sub>max</sub>/σ<sub>t</sub> − σ<sub>min</sub>/σ<sub>c</sub></span></div>
+      <div class="ht-row"><span>Tsai–Wu</span><span>F<sub>11</sub>(σ<sub>1</sub>+σ<sub>2</sub>) + F<sub>33</sub>σ<sub>3</sub> + G<sub>11</sub>(σ<sub>1</sub>²+σ<sub>2</sub>²) + G<sub>33</sub>σ<sub>3</sub>² + 2G<sub>12</sub>σ<sub>1</sub>σ<sub>2</sub> + 2G<sub>13</sub>(σ<sub>1</sub>+σ<sub>2</sub>)σ<sub>3</sub></span></div>
+    </div>
+
+    <div class="help-notes">
+      <p><b>标定：</b>F<sub>11</sub>=1/σ<sub>t</sub>−1/σ<sub>c</sub>，G<sub>11</sub>=1/(σ<sub>t</sub>σ<sub>c</sub>)，G<sub>12</sub>=G<sub>11</sub>−1/(2S²)（由纯剪切 σ=(S,−S,0) 时 g=1 定）；F<sub>33</sub>=0.5F<sub>11</sub>，G<sub>33</sub>=0.25G<sub>11</sub>，G<sub>13</sub>=−0.2G<sub>11</sub> 为柱轴方向的横向各向同性取值。S 过小时程序会自动夹紧，避免二次型退化成双曲面。</p>
+      <p><b>自检：</b>单轴拉伸取 σ=(σ<sub>t</sub>,0,0) 时 Tsai–Wu 与第一强度理论应给出 g=1；单轴压缩取 (−σ<sub>c</sub>,0,0) 同理；纯剪切 (S,−S,0) 时 Tsai–Wu 应给出 g=1。可把这三个状态载入后对照判定表。</p>
+      <p><b>数字：</b><span id="coefLine">—</span></p>
+    </div>
+  </div>
+</div>
+
+<script src="../../assets/js/ice-criteria.js"></script>
+<script src="lab.js"></script>
+
+</body></html>

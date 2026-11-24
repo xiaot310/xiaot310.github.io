@@ -1,0 +1,13 @@
+# 本地私有配置：包含 LaTeX 私密链接，绝对不要提交
+workbench/private.json
+workbench/data/
+
+# 部署 / 临时产物
+*.zip
+Thumbs.db
+.DS_Store
+__pycache__/
+*.pyc
+
+# 本地预览
+_preview/

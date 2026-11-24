@@ -1,0 +1,116 @@
+{
+  "name": "xiaot310-site",
+  "displayName": "张义廷 · 研究工作台",
+  "version": "2.0.0",
+  "updated": "2026-11-24",
+  "type": "static-personal-research-site-with-local-workbench",
+  "owner": {
+    "name": "张义廷",
+    "nameEn": "Yiting ZHANG",
+    "github": "xiaot310",
+    "site": "https://xiaot310.github.io/"
+  },
+  "stack": {
+    "public": "hand-written HTML / CSS / vanilla JS, zero dependencies",
+    "local": "Python 3 standard library http.server, localhost only",
+    "physics": "Canvas 2D + custom perspective projection in assets/js/ice-criteria.js"
+  },
+  "routes": [
+    { "path": "/", "file": "index.html", "purpose": "个人主页：研究、项目、工作台入口" },
+    { "path": "/lab/ice-failure/", "file": "lab/ice-failure/index.html", "purpose": "海冰失效交互演示" },
+    { "path": "/agent/", "file": "agent/index.html", "purpose": "AI 交接、内容规则、自检" },
+    { "path": "/workbench/", "file": "workbench/index.html", "purpose": "本地工作台；公开部署时降级为离线" }
+  ],
+  "content": {
+    "source": "content/site-content.js",
+    "planSeed": "content/plan.js",
+    "renderer": "assets/js/home.js",
+    "schemaDocs": "content/README.md",
+    "arrays": {
+      "profile": "姓名、身份、简介、兴趣",
+      "focus": "当前在做三张卡",
+      "research": "研究方向三张卡",
+      "projects": "项目与演示四张卡",
+      "timeline": "关于区时间线"
+    }
+  },
+  "workbench": {
+    "page": "workbench/index.html",
+    "logic": "workbench/workbench.js",
+    "styles": "workbench/workbench.css",
+    "server": "workbench/server.py",
+    "privateConfig": "workbench/private.json",
+    "bind": "127.0.0.1",
+    "defaultPort": 8765,
+    "endpoints": [
+      "GET /api/status",
+      "GET /api/files?limit=300&q=",
+      "GET /api/tools",
+      "POST /api/open",
+      "POST /api/reveal",
+      "GET /go/latex",
+      "GET /go/draw"
+    ],
+    "storage": {
+      "plan": "localStorage: xiaot.plan.v1",
+      "notes": "localStorage: xiaot.notes.v1",
+      "sketch": "localStorage: xiaot.sketch.v1",
+      "reading": "localStorage: xiaot.reading.v1"
+    }
+  },
+  "privateBoundary": {
+    "neverCommit": [
+      "workbench/private.json",
+      "workbench/data/",
+      "个人文件",
+      "奖学金",
+      "身份证",
+      "学历",
+      "学位",
+      "宿舍",
+      "比赛",
+      "LaTeX token",
+      "未发表数据 / 审稿意见"
+    ],
+    "excludedFromScan": [
+      "个人文件",
+      "奖学金",
+      "身份证",
+      "学历",
+      "学位",
+      "宿舍",
+      "比赛",
+      ".git",
+      "node_modules",
+      "__pycache__",
+      ".pytest_cache",
+      "venv",
+      ".venv",
+      "_archive",
+      "data"
+    ],
+    "accessControl": "GitHub Pages has no per-user auth; public layer is public, private layer stays on localhost."
+  },
+  "docs": [
+    "AGENTS.md",
+    "content/README.md",
+    "workbench/README.md",
+    "agent/manifest.json",
+    "llms.txt",
+    "README.md"
+  ],
+  "principles": [
+    "公开层纯静态、零依赖、相对路径",
+    "私有配置不进 Git，静态访问被拦截",
+    "内容优先改数据，不复制 HTML",
+    "工作台只绑定 127.0.0.1",
+    "物理只有一份实现",
+    "不伪造论文状态 / 访问权限 / 在线状态"
+  ],
+  "knownLimits": [
+    "静态托管不能做按人授权；需要登录时应另建后端",
+    "工作台文件列表只显示最近 300 个，最多扫描 800 个、30 MB/文件",
+    "海冰演示是教学可视化，不是工程仿真；三维是 σ3 切片",
+    "Agent 问答是关键词检索，不是大模型"
+  ]
+}

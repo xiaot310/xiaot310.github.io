@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作台 · 张义廷</title>
+<meta name="description" content="张义廷的本地研究工作台：计划、最近文件、LaTeX、画图、文献与笔记。">
+<meta name="theme-color" content="#08131c">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="workbench.css">
+</head>
+<body class="wb-page">
+
+<header class="wb-top">
+  <div class="wb-top-inner">
+    <a class="wb-brand" href="../index.html">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M32 8 53 20v24L32 56 11 44V20z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M20 25h24M32 25v16M20 39h24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".65"/>
+      </svg>
+      <span><b id="wbBrand">YITING ZHANG</b><small>研究工作台 / LOCAL</small></span>
+    </a>
+    <div class="wb-top-mid">
+      <span class="wb-chip">LOCAL WORKBENCH</span>
+      <span class="wb-api" id="apiBadge"><i class="status-dot"></i><span id="apiBadgeText">检查中…</span></span>
+    </div>
+    <div class="wb-top-actions">
+      <span class="wb-date" id="wbDate">—</span>
+      <button type="button" class="wb-ghost" id="btnRefresh">刷新</button>
+      <a class="wb-ghost" href="../index.html">主页 ↗</a>
+    </div>
+  </div>
+</header>
+
+<nav class="wb-tabs" id="wbTabs" aria-label="工作台导航">
+  <a href="#today" data-tab="today" class="is-active">今日</a>
+  <a href="#plan" data-tab="plan">计划 <span id="tabTaskCount"></span></a>
+  <a href="#files" data-tab="files">文件 <span id="tabFileCount"></span></a>
+  <a href="#tools" data-tab="tools">工具</a>
+  <a href="#literature" data-tab="literature">文献</a>
+  <a href="#notes" data-tab="notes">笔记</a>
+  <span class="wb-tabs-note">本地优先 · 私有文件不上传</span>
+</nav>
+
+<main class="wb-wrap">
+  <div class="local-banner" id="localBanner" hidden>
+    <div><b>本地服务未连接</b><span>文件、LaTeX、文件夹打开需要本地服务。先运行 <code>python workbench/server.py</code>，再打开 <code>http://127.0.0.1:8765/workbench/</code>。</span></div>
+    <button type="button" class="wb-ghost" id="btnRetryApi">重新检查</button>
+  </div>
+
+  <!-- ================= today ================= -->
+  <section class="wb-panel is-active" id="panel-today" data-panel="today">
+    <div class="wb-hero">
+      <div>
+        <p class="wb-kicker"><span id="todayDate">—</span> · <span id="todayGreeting">你好</span></p>
+        <h1>今天，先推进哪一件？</h1>
+        <p class="wb-lede">把计划、文件和工具放在同一页；做完一件就移动到“已完成”，不靠记忆。</p>
+      </div>
+      <div class="wb-hero-actions">
+        <a class="wb-btn primary" href="#plan">打开计划 →</a>
+        <a class="wb-btn" href="#files">最近文件</a>
+        <a class="wb-btn" href="../index.html">公开主页 ↗</a>
+      </div>
+    </div>
+
+    <div class="wb-stats">
+      <div class="wb-stat"><span>进行中</span><b id="statTasks">—</b><small>现在 / 下一步</small></div>
+      <div class="wb-stat"><span>本周到期</span><b id="statDue">—</b><small>按截止日期</small></div>
+      <div class="wb-stat"><span>工作文件</span><b id="statFiles">—</b><small id="statFilesNote">本地服务</small></div>
+      <div class="wb-stat"><span>研究主线</span><b id="statFocus">—</b><small>论文 / 项目</small></div>
+    </div>
+
+    <div class="wb-two">
+      <section class="wb-card">
+        <div class="wb-card-head"><h2>当前焦点</h2><a href="#plan">全部 →</a></div>
+        <div class="today-focus" id="todayFocus"></div>
+        <div class="today-next" id="todayNext"></div>
+      </section>
+      <section class="wb-card">
+        <div class="wb-card-head"><h2>快速开始</h2><span class="wb-mini">常用入口</span></div>
+        <div class="quick-actions">
+          <button type="button" class="qa" data-open="latex"><span class="qa-i">Σ</span><b>LaTeX 项目</b><small>仅本机</small></button>
+          <a class="qa" href="#files"><span class="qa-i">▤</span><b>最近文件</b><small>论文 / 项目</small></a>
+          <a class="qa" href="#tools"><span class="qa-i">✎</span><b>画图</b><small>draw.io / 手绘</small></a>
+          <a class="qa" href="#literature"><span class="qa-i">⌕</span><b>查文献</b><small>Scholar / arXiv</small></a>
+        </div>
+        <div class="wb-mini-block">
+          <div class="mini-row"><span>本地服务</span><b id="todayApi">未连接</b></div>
+          <div class="mini-row"><span>工作区</span><b id="todayRoot">—</b></div>
+          <div class="mini-row"><span>LaTeX</span><b id="todayLatex">未配置</b></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="wb-card">
+      <div class="wb-card-head"><h2>最近文件</h2><a href="#files">查看全部 →</a></div>
+      <div class="wb-recent" id="todayRecent"><p class="wb-muted">启动本地服务后显示最近文件。</p></div>
+    </section>
+  </section>
+
+  <!-- ================= plan ================= -->
+  <section class="wb-panel" id="panel-plan" data-panel="plan" hidden>
+    <div class="wb-section-head">
+      <div><p class="wb-kicker">PLAN</p><h2>工作规划</h2><p>任务只在当前浏览器保存；换电脑前先导出 JSON。</p></div>
+      <div class="wb-head-actions">
+        <button type="button" class="wb-ghost" id="btnExportPlan">导出 JSON</button>
+        <label class="wb-ghost wb-file-label">导入<input type="file" id="importPlan" accept="application/json" hidden></label>
+        <button type="button" class="wb-ghost" id="btnResetPlan">重置种子</button>
+      </div>
+    </div>
+
+    <form class="task-form" id="taskForm">
+      <input id="taskTitle" type="text" placeholder="加一件要做的事…" autocomplete="off" required>
+      <select id="taskProject" aria-label="所属项目">
+        <option>论文 01</option><option>论文 02</option><option>论文 03</option>
+        <option>项目</option><option>课程</option><option>助教</option><option>工具</option><option>其他</option>
+      </select>
+      <input id="taskDue" type="date" aria-label="截止日期">
+      <select id="taskPriority" aria-label="优先级"><option value="high">高</option><option value="mid" selected>中</option><option value="low">低</option></select>
+      <button type="submit">添加</button>
+    </form>
+
+    <div class="kanban" id="kanban"></div>
+    <p class="wb-footnote">提示：卡片上的 ← → 改状态；先做“现在”，做完拖到“已完成”不必真的拖，点箭头即可。</p>
+  </section>
+
+  <!-- ================= files ================= -->
+  <section class="wb-panel" id="panel-files" data-panel="files" hidden>
+    <div class="wb-section-head">
+      <div><p class="wb-kicker">FILES</p><h2>最近文件</h2><p>从本地研究工作区的论文、项目、课程、助教目录读取；不包含个人文件与证件材料。</p></div>
+      <div class="wb-head-actions">
+        <span class="wb-api small" id="filesApi"><i class="status-dot"></i><span>检查中</span></span>
+        <button type="button" class="wb-ghost" id="btnRefreshFiles">刷新</button>
+      </div>
+    </div>
+
+    <div class="file-toolbar">
+      <input id="fileSearch" type="search" placeholder="搜索文件名或目录…" autocomplete="off">
+      <div class="kind-filter" id="kindFilter">
+        <button type="button" data-kind="all" class="is-active">全部</button>
+        <button type="button" data-kind="doc">文档</button>
+        <button type="button" data-kind="pdf">PDF</button>
+        <button type="button" data-kind="img">图片</button>
+        <button type="button" data-kind="code">代码</button>
+        <button type="button" data-kind="other">其他</button>
+      </div>
+    </div>
+
+    <div class="folder-shortcuts" id="folderShortcuts"></div>
+    <div class="file-summary" id="fileSummary">等待本地服务…</div>
+    <div class="file-list" id="fileList"></div>
+    <p class="wb-footnote">打开/定位按钮会调用本机 Python 服务；公开部署时这些按钮会自动禁用。不要把带个人信息的文件夹加入 roots。</p>
+  </section>
+
+  <!-- ================= tools ================= -->
+  <section class="wb-panel" id="panel-tools" data-panel="tools" hidden>
+    <div class="wb-section-head">
+      <div><p class="wb-kicker">TOOLS</p><h2>工具</h2><p>LaTeX 与本地文件夹只在本机可用；draw.io 和手绘板可直接使用。</p></div>
+    </div>
+
+    <div class="tool-grid">
+      <section class="wb-card tool-card">
+        <div class="tool-head"><span class="tool-i">Σ</span><span class="tool-tag">LOCAL</span></div>
+        <h3>在线 LaTeX 项目</h3>
+        <p>跳转到上海交大 LaTeX 平台的私有项目；链接不写进公开页面。</p>
+        <div class="tool-status" id="latexToolStatus">未连接本地服务</div>
+        <button type="button" class="wb-btn primary" id="openLatex">打开 LaTeX →</button>
+      </section>
+
+      <section class="wb-card tool-card">
+        <div class="tool-head"><span class="tool-i">✎</span><span class="tool-tag">WEB</span></div>
+        <h3>draw.io</h3>
+        <p>复杂流程图、架构图用 app.diagrams.net；临时草图用下面的手绘板。</p>
+        <a class="wb-btn" href="https://app.diagrams.net/" target="_blank" rel="noopener">打开 draw.io ↗</a>
+      </section>
+
+      <section class="wb-card tool-card">
+        <div class="tool-head"><span class="tool-i">▤</span><span class="tool-tag">LOCAL</span></div>
+        <h3>本地文件夹</h3>
+        <p>直接打开论文、项目、课程目录；需要本地服务。</p>
+        <div class="tool-inline">
+          <button type="button" class="wb-btn" data-open-root="论文">论文</button>
+          <button type="button" class="wb-btn" data-open-root="项目">项目</button>
+          <button type="button" class="wb-btn" data-open-root="课程">课程</button>
+          <button type="button" class="wb-btn" data-open-root="助教">助教</button>
+        </div>
+      </section>
+
+      <section class="wb-card tool-card">
+        <div class="tool-head"><span class="tool-i">?</span><span class="tool-tag">DOC</span></div>
+        <h3>使用说明</h3>
+        <p>工作台 API、私有边界、启动方式与故障排查。</p>
+        <a class="wb-btn" href="README.md">打开 README ↗</a>
+      </section>
+    </div>
+
+    <section class="wb-card sketch-card">
+      <div class="wb-card-head"><h2>手绘板</h2><span class="wb-mini" id="sketchSaved">自动保存在本机</span></div>
+      <div class="sketch-tools">
+        <div class="swatches" id="swatches">
+          <button type="button" data-color="#12212b" style="--c:#12212b" class="is-active" aria-label="深色"></button>
+          <button type="button" data-color="#0a6a83" style="--c:#0a6a83" aria-label="青色"></button>
+          <button type="button" data-color="#cf5b3a" style="--c:#cf5b3a" aria-label="橙色"></button>
+          <button type="button" data-color="#2e7d5b" style="--c:#2e7d5b" aria-label="绿色"></button>
+        </div>
+        <label class="sketch-range">笔宽 <input type="range" id="brushWidth" min="1" max="14" value="3"></label>
+        <button type="button" class="wb-ghost" id="btnEraser">橡皮</button>
+        <button type="button" class="wb-ghost" id="btnClearSketch">清空</button>
+        <button type="button" class="wb-ghost" id="btnSaveSketch">下载 PNG</button>
+      </div>
+      <canvas id="sketch" width="1200" height="620" aria-label="手绘板"></canvas>
+    </section>
+  </section>
+
+  <!-- ================= literature ================= -->
+  <section class="wb-panel" id="panel-literature" data-panel="literature" hidden>
+    <div class="wb-section-head">
+      <div><p class="wb-kicker">LITERATURE</p><h2>查文献</h2><p>输入关键词，选择数据库跳转；阅读清单只保存在本机浏览器。</p></div>
+    </div>
+
+    <form class="lit-form" id="litForm">
+      <input id="litQuery" type="search" placeholder="例如：ice-covered waters path planning" autocomplete="off">
+      <button type="submit">搜索</button>
+    </form>
+    <div class="lit-sources" id="litSources"></div>
+
+    <div class="wb-two">
+      <section class="wb-card">
+        <div class="wb-card-head"><h2>阅读清单</h2><button type="button" class="wb-ghost" id="btnAddReading">加入当前检索</button></div>
+        <div class="reading-list" id="readingList"></div>
+      </section>
+      <section class="wb-card">
+        <div class="wb-card-head"><h2>检索提示</h2></div>
+        <ul class="lit-tips">
+          <li>先按“冰区 / 路径规划 / 健康监测”分主题，不要把所有关键词堆一次。</li>
+          <li>Google Scholar 查引用链，arXiv 查预印本，CNKI / 万方查中文硕博论文。</li>
+          <li>校外访问学校数据库需要 VPN；工作台不代理数据库，只负责跳转。</li>
+          <li>把“为什么相关”写在阅读清单里，不要只收藏链接。</li>
+        </ul>
+      </section>
+    </div>
+  </section>
+
+  <!-- ================= notes ================= -->
+  <section class="wb-panel" id="panel-notes" data-panel="notes" hidden>
+    <div class="wb-section-head">
+      <div><p class="wb-kicker">NOTES</p><h2>今日笔记</h2><p>自动保存在本机浏览器；重要内容请下载 .md 备份。</p></div>
+      <div class="wb-head-actions">
+        <span class="wb-mini" id="noteSaved">未保存</span>
+        <button type="button" class="wb-ghost" id="btnDownloadNote">下载 .md</button>
+        <button type="button" class="wb-ghost" id="btnClearNote">清空</button>
+      </div>
+    </div>
+    <textarea id="noteArea" class="note-area" placeholder="今天读到什么、卡在哪里、下一步做什么…"></textarea>
+    <div class="note-meta"><span id="noteCount">0 字</span><span>浏览器 localStorage · 不上传</span></div>
+  </section>
+</main>
+
+<div class="wb-toast" id="wbToast" role="status" aria-live="polite"></div>
+
+<script src="../site.config.js"></script>
+<script src="../content/site-content.js"></script>
+<script src="../content/plan.js"></script>
+<script src="workbench.js"></script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>张义廷 · 研究工作台</title>
+<meta name="description" content="张义廷的个人主页与研究工作台：极地工程、海冰力学、路径规划与智能优化；公开展示 + 本地优先的文件与工具入口。">
+<meta name="theme-color" content="#f4f1e9">
+<meta property="og:title" content="张义廷 · 研究工作台">
+<meta property="og:description" content="极地工程、海冰力学、路径规划与智能优化；公开展示 + 本地优先的研究工作台。">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/personal.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="张义廷主页">
+      <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M32 8 53 20v24L32 56 11 44V20z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M20 25h24M32 25v16M20 39h24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".65"/>
+        <circle cx="32" cy="32" r="2.2" fill="currentColor"/>
+      </svg>
+      <span class="brand-text">
+        <strong data-site="brand">YITING ZHANG</strong>
+        <small data-site="tagline">海洋工程 · 极地力学 · 智能规划</small>
+      </span>
+    </a>
+    <nav class="nav" aria-label="主导航">
+      <a href="#research">研究</a>
+      <a href="workbench/index.html">工作台</a>
+      <a href="lab/ice-failure/index.html">演示</a>
+      <a href="agent/index.html">Agent</a>
+      <a href="#about">关于</a>
+    </nav>
+    <a class="header-cta" href="workbench/index.html">打开工作台 <span>↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="wrap hero hero-personal">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="dot"></span> <span class="eyebrow-long">Shanghai Jiao Tong University · Ocean Engineering</span><span class="eyebrow-short">SJTU · Ocean Engineering</span></p>
+      <h1>把研究、项目和工具，<br>放进一个工作台。</h1>
+      <p class="lede">
+        我是张义廷，关注极地工程、海冰力学、路径规划与智能优化。
+        这里既是对外的研究主页，也是我每天使用的本地工作入口：论文、文件、画图、文献和 LaTeX 都在同一个地方。
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="workbench/index.html">进入工作台 <span class="arw">→</span></a>
+        <a class="btn btn-ghost" href="#research">查看研究 <span class="arw">↓</span></a>
+        <a class="btn btn-ghost" data-site-link="github" href="https://github.com/xiaot310" target="_blank" rel="noopener">GitHub <span class="arw">↗</span></a>
+      </div>
+      <ul class="hero-meta">
+        <li>1 篇论文已投稿 · 审稿准备</li>
+        <li>2 个方向在研</li>
+        <li>公开主页 + 本地工作台</li>
+      </ul>
+    </div>
+
+    <aside class="workbench-preview" aria-label="本地工作台状态">
+      <div class="wbp-top">
+        <span class="wbp-live"><i class="status-dot" id="wbDot"></i><span id="wbStatusText">检查本地工作台…</span></span>
+        <span>LOCAL / 8765</span>
+      </div>
+      <div class="wbp-body">
+        <p class="wbp-kicker">Personal research desk</p>
+        <h2>研究、文件、工具，<br>都在一个入口。</h2>
+        <div class="wbp-list">
+          <div class="wbp-row"><span class="n">P01</span><span class="t">LLM 引导稀疏 A* · 无人艇路径规划</span><span class="s">审稿准备</span></div>
+          <div class="wbp-row"><span class="n">P02</span><span class="t">极地冰区路径规划 · 前期调研</span><span class="s">调研中</span></div>
+          <div class="wbp-row"><span class="n">P03</span><span class="t">海洋结构健康监测 · 选题</span><span class="s">调研中</span></div>
+        </div>
+        <div class="wbp-actions">
+          <a class="wbp-btn primary" href="workbench/index.html">打开工作台 →</a>
+          <a class="wbp-btn" href="workbench/index.html#files">最近文件</a>
+          <a class="wbp-btn" href="agent/index.html">Agent</a>
+        </div>
+      </div>
+      <div class="wbp-foot"><span id="wbStatusNote">私有文件不离开这台电脑</span><a href="workbench/index.html#today">TODAY →</a></div>
+    </aside>
+  </section>
+
+  <section class="wrap quick-dock" aria-label="常用入口">
+    <a class="dock-item" href="workbench/index.html#plan">
+      <span class="dock-icon">▦</span>
+      <span><b>计划</b><small>现在 / 下一步 / 已完成</small></span>
+    </a>
+    <a class="dock-item" href="workbench/index.html#tools">
+      <span class="dock-icon">✎</span>
+      <span><b>画图</b><small>手绘板 + draw.io</small></span>
+    </a>
+    <a class="dock-item" href="workbench/index.html#literature">
+      <span class="dock-icon">⌕</span>
+      <span><b>查文献</b><small>Scholar / arXiv / CNKI</small></span>
+    </a>
+    <a class="dock-item" href="workbench/index.html#tools">
+      <span class="dock-icon">Σ</span>
+      <span><b>LaTeX</b><small>仅本机 · 私有链接</small><span class="dock-badge">LOCAL</span></span>
+    </a>
+    <a class="dock-item" href="workbench/index.html#files">
+      <span class="dock-icon">▤</span>
+      <span><b>工作文件</b><small>论文 / 项目 / 课程</small></span>
+    </a>
+    <a class="dock-item" href="https://github.com/xiaot310" target="_blank" rel="noopener">
+      <span class="dock-icon">↗</span>
+      <span><b>GitHub</b><small>xiaot310</small></span>
+    </a>
+  </section>
+
+  <section class="wrap section section-tight" id="now">
+    <div class="section-head reveal">
+      <div>
+        <p class="kicker">01 / Now</p>
+        <h2>当前在做</h2>
+      </div>
+      <p>三条主线：一篇在审稿，两篇在调研；课程与助教穿插其中。点击卡片进入计划或文件。</p>
+    </div>
+    <div class="focus-grid" id="focusGrid"></div>
+  </section>
+
+  <section class="wrap section section-tight" id="research">
+    <div class="section-head reveal">
+      <div>
+        <p class="kicker">02 / Research</p>
+        <h2>研究方向</h2>
+      </div>
+      <p>公开页面只展示可公开的摘要与状态；论文源文件、审稿材料和未发表数据留在本地工作区。</p>
+    </div>
+    <div class="research-grid" id="researchGrid"></div>
+  </section>
+
+  <section class="wrap section section-tight" id="projects">
+    <div class="section-head reveal">
+      <div>
+        <p class="kicker">03 / Projects</p>
+        <h2>项目与演示</h2>
+      </div>
+      <p>能公开的做成演示，不能公开的留在工作台；每个入口都标明是 LIVE 还是 LOCAL。</p>
+    </div>
+    <div class="project-grid" id="projectGrid"></div>
+  </section>
+
+  <section class="wrap workbench-band" id="workbench">
+    <div class="wb-copy reveal">
+      <p class="kicker">04 / Workbench</p>
+      <h2>公开展示在云端，<br>研究工作留在本地。</h2>
+      <p>
+        这个站点有两层：GitHub Pages 上的公开主页，以及只在 127.0.0.1 运行的本地工作台。
+        工作台能列出最近文件、打开 LaTeX、画图、查文献、管理计划；这些私有内容不会上传。
+      </p>
+      <ul class="wb-bullets">
+        <li><b>01</b><span>计划、笔记、手绘默认存在浏览器 localStorage；可导出 JSON / PNG 备份。</span></li>
+        <li><b>02</b><span>文件列表由本地 Python 服务读取 D:\工作\研究生，只绑定本机，不暴露到公网。</span></li>
+        <li><b>03</b><span>LaTeX 私密链接放在 workbench/private.json，部署时被 .gitignore 排除。</span></li>
+      </ul>
+      <div class="wb-actions">
+        <a class="btn btn-light" href="workbench/index.html">启动本地工作台 <span class="arw">→</span></a>
+        <a class="btn btn-outline-light" href="workbench/README.md">使用说明 <span class="arw">↗</span></a>
+        <button class="btn btn-outline-light" type="button" data-copy-handoff>复制交接 Prompt <span class="arw">⧉</span></button>
+      </div>
+    </div>
+    <div class="storage-map reveal" aria-label="存储位置说明">
+      <div class="storage-row public"><span>公开主页 · 研究展示</span><b>GitHub Pages</b><small>任何人可访问；只放可公开内容</small></div>
+      <div class="storage-row private"><span>本地工作台 · 文件 / LaTeX</span><b>127.0.0.1:8765</b><small>只在本机；服务停止后不可访问</small></div>
+      <div class="storage-row"><span>计划 / 笔记 / 手绘</span><b>浏览器 localStorage</b><small>存在当前浏览器；可导出备份</small></div>
+      <div class="storage-row"><span>私有链接与配置</span><b>workbench/private.json</b><small>本地文件；已在 .gitignore 中排除</small></div>
+    </div>
+  </section>
+
+  <section class="wrap agent-band" id="agent">
+    <div class="agent-copy reveal">
+      <p class="kicker">05 / Agent</p>
+      <h2>给下一个 AI 的<br>交接书</h2>
+      <p>站点的结构、内容数据、公开/私有边界和验证方法都写成文档。未来的 AI 不必从零猜“这张卡从哪里来、这个文件在哪”。</p>
+      <ul class="agent-points">
+        <li><b>01</b><span>内容更新：改 content/site-content.js，就能新增研究或项目卡。</span></li>
+        <li><b>02</b><span>机器入口：manifest.json、llms.txt、AGENTS.md、content/README.md。</span></li>
+        <li><b>03</b><span>本地自检：检查公开页面、内容文件与 /api/status。</span></li>
+      </ul>
+      <div class="agent-actions">
+        <a class="btn btn-light" href="agent/index.html">打开 Agent 模块 <span class="arw">→</span></a>
+        <button class="btn btn-outline-light" type="button" data-copy-handoff>复制交接 Prompt <span class="arw">⧉</span></button>
+      </div>
+    </div>
+    <div class="terminal reveal" aria-label="交接摘要">
+      <div class="term-bar"><i></i><i></i><i></i><span>AGENTS.md — 交接摘要</span></div>
+      <div class="term-body">
+<span class="c">$</span> cat content/README.md<br>
+<span class="g">#</span> 一个数组 = 一张展示卡<br>
+<span class="g">#</span> 公开：site-content.js<br>
+<span class="g">#</span> 私有：workbench/private.json<br>
+<span class="g">#</span> 不要提交个人文件 / LaTeX 链接<br>
+<span class="c">$</span> python workbench/server.py<br>
+<span class="o">→</span> http://127.0.0.1:8765/workbench/
+      </div>
+      <div class="term-foot"><button class="copy-btn" type="button" data-copy-handoff>复制交接 Prompt ⧉</button></div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="about">
+    <div class="section-head reveal">
+      <div>
+        <p class="kicker">06 / About</p>
+        <h2>关于我</h2>
+      </div>
+      <p>公开版只放研究相关的内容；个人证件、成绩单、奖学金等材料不进入站点。</p>
+    </div>
+
+    <div class="about-layout reveal">
+      <div class="about-text">
+        <p>
+          我是张义廷，上海交通大学研究生，研究方向围绕海洋工程与极地环境：冰区路径规划、海冰失效、
+          状态估计与智能优化。现在主要推进三篇论文：一篇已投稿并准备审稿意见，两篇处在前期调研。
+        </p>
+        <p>
+          这个站点不是一张静态简历，而是一个可以持续生长的工作台。公开部分用于分享研究、演示和笔记；
+          本地部分用于每天真正要用的文件、LaTeX、画图和文献。两者共用一套内容与设计，但边界分开。
+        </p>
+        <div class="about-links">
+          <a href="https://github.com/xiaot310" target="_blank" rel="noopener">GitHub ↗</a>
+          <a href="workbench/README.md">工作台说明</a>
+          <a href="agent/index.html">Agent / 交接</a>
+          <a href="llms.txt">llms.txt</a>
+        </div>
+      </div>
+      <div>
+        <div class="about-facts">
+          <div class="about-fact"><span>方向</span><b>极地工程 / 海冰力学 / 路径规划 / 智能优化</b></div>
+          <div class="about-fact"><span>身份</span><b>上海交通大学 · 研究生</b></div>
+          <div class="about-fact"><span>地点</span><b>上海</b></div>
+          <div class="about-fact"><span>公开主页</span><b>xiaot310.github.io</b></div>
+          <div class="about-fact"><span>技术</span><b>静态 HTML / CSS / JS · 本地 Python 工作台</b></div>
+        </div>
+        <ul class="timeline" id="timeline"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span class="footer-brand" data-site="brand">YITING ZHANG</span>
+    <nav class="footer-links" aria-label="页脚导航">
+      <a href="workbench/index.html">工作台</a>
+      <a href="lab/ice-failure/index.html">演示</a>
+      <a href="agent/index.html">Agent</a>
+      <a href="llms.txt">llms.txt</a>
+      <a data-site-link="github" href="https://github.com/xiaot310" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <p class="footer-note">© <span data-site="year">2026</span> <span data-site="owner">张义廷</span> · 公开内容可分享，私有文件仅本地</p>
+  </div>
+</footer>
+
+<script src="site.config.js"></script>
+<script src="content/site-content.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/home.js"></script>
+</body>
+</html>

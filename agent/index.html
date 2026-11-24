@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent · 张义廷研究工作台</title>
+<meta name="description" content="给下一个 AI 的交接书：站点结构、内容更新、公开/私有边界、工作台 API 与部署验证。">
+<meta name="theme-color" content="#f4f1e9">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="agent.css">
+</head>
+<body class="agent-page">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="../index.html" aria-label="张义廷主页">
+      <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M32 8 53 20v24L32 56 11 44V20z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M20 25h24M32 25v16M20 39h24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".65"/>
+        <circle cx="32" cy="32" r="2.2" fill="currentColor"/>
+      </svg>
+      <span class="brand-text">
+        <strong data-site="brand">YITING ZHANG</strong>
+        <small data-site="tagline">海洋工程 · 极地力学 · 智能规划</small>
+      </span>
+    </a>
+    <nav class="nav" aria-label="主导航">
+      <a href="../index.html#research">研究</a>
+      <a href="../workbench/index.html">工作台</a>
+      <a href="../lab/ice-failure/index.html">演示</a>
+      <a href="index.html" aria-current="page">Agent</a>
+      <a href="../index.html#about">关于</a>
+    </nav>
+    <a class="header-cta" href="../workbench/index.html">打开工作台 <span>↗</span></a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="wrap agent-hero">
+    <p class="eyebrow"><span class="dot"></span> Agent handoff · xiaot310-site</p>
+    <h1>给下一个 AI 的<br>交接书。</h1>
+    <p class="lede">
+      站点怎么长出来、内容从哪里改、哪些东西绝对不能公开——都写在这里。
+      目标不是让下一个 AI “重新理解”，而是让它五分钟内知道该动哪个文件、不能动什么。
+    </p>
+    <div class="agent-hero-actions">
+      <button class="btn btn-primary" type="button" data-copy-handoff>复制交接 Prompt <span class="arw">⧉</span></button>
+      <a class="btn btn-ghost" href="../AGENTS.md">打开 AGENTS.md <span class="arw">↗</span></a>
+      <a class="btn btn-ghost" href="../workbench/index.html">打开工作台 <span class="arw">→</span></a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><span>Content source</span><b>1 个数据文件</b></div>
+      <div class="hs"><span>Local API</span><b>7 个端点</b></div>
+      <div class="hs"><span>Private config</span><b>不进 Git</b></div>
+      <div class="hs hs-check"><span>Self-check</span><b id="checkSummaryTop">未运行</b><button class="mini-btn" type="button" id="runCheckTop">运行</button></div>
+    </div>
+  </section>
+
+  <div class="wrap agent-layout">
+    <aside class="agent-toc" aria-label="本页目录">
+      <p class="toc-title">ON THIS PAGE</p>
+      <a href="#start">01 / 先读</a>
+      <a href="#layers">02 / 两层结构</a>
+      <a href="#content">03 / 加内容</a>
+      <a href="#workbench">04 / 本地工作台</a>
+      <a href="#deploy">05 / 部署</a>
+      <a href="#verify">06 / 自检</a>
+      <a href="#prompt">07 / 交接 Prompt</a>
+      <a href="#ask">08 / 检索</a>
+    </aside>
+
+    <div class="agent-content">
+      <section class="doc-section" id="start">
+        <p class="doc-kicker">01 / START HERE</p>
+        <h2>先读三份文件，再动手。</h2>
+        <p class="doc-lede">
+          这个站点没有隐藏的构建步骤。公开层是手写 HTML/CSS/JS，本地层是一个 Python 标准库服务。
+          真正需要先理解的只有三件事：结构、内容数据、私有边界。
+        </p>
+        <div class="fact-grid">
+          <div><span>FOR CODING AGENTS</span><b><a href="../AGENTS.md">AGENTS.md</a></b><small>硬约束、目录、API、验收清单</small></div>
+          <div><span>FOR CONTENT</span><b><a href="../content/README.md">content/README.md</a></b><small>研究/项目卡的字段与新增步骤</small></div>
+          <div><span>FOR LOCAL</span><b><a href="../workbench/README.md">workbench/README.md</a></b><small>启动、私链、文件扫描与故障排查</small></div>
+        </div>
+        <h3>机器可读入口</h3>
+        <div class="machine-links">
+          <a href="manifest.json"><span>JSON</span><b>manifest.json</b><small>站点清单与私有边界</small></a>
+          <a href="../llms.txt"><span>TEXT</span><b>llms.txt</b><small>给 LLM 的纯文本摘要</small></a>
+          <a href="../content/site-content.js"><span>JS</span><b>site-content.js</b><small>首页内容数据</small></a>
+          <a href="../content/plan.js"><span>JS</span><b>plan.js</b><small>工作台计划种子</small></a>
+        </div>
+      </section>
+
+      <section class="doc-section" id="layers">
+        <p class="doc-kicker">02 / ARCHITECTURE</p>
+        <h2>两层，不是一套“假装有权限”的网站。</h2>
+        <p class="doc-lede">
+          GitHub Pages 没有登录和按人授权。所以站点明确分成两层：公开层放愿意让任何人看的内容；
+          本地层只绑定 127.0.0.1，放文件、LaTeX、计划和笔记。分享公开链接不会顺带分享私有层。
+        </p>
+        <div class="arch">
+          <div class="arch-row">
+            <div class="arch-box"><span>PUBLIC</span><b>GitHub Pages</b><small>index.html / lab / agent / content<br>纯静态、零依赖、可分享</small></div>
+            <div class="arch-arrow">+</div>
+            <div class="arch-box"><span>LOCAL</span><b>127.0.0.1:8765</b><small>workbench/server.py<br>文件 / LaTeX / 计划 / 笔记 / 手绘</small></div>
+          </div>
+          <div class="arch-row">
+            <div class="arch-box"><span>PRIVATE CONFIG</span><b>workbench/private.json</b><small>研究根路径、LaTeX 私链、排除名单；.gitignore 排除</small></div>
+            <div class="arch-arrow">!</div>
+            <div class="arch-box"><span>NEVER PUBLIC</span><b>个人文件 / 证件 / 成绩单</b><small>不扫描、不返回、不进入展示数据</small></div>
+          </div>
+        </div>
+        <pre class="tree">xiaot310-site/
+├─ index.html                公开主页
+├─ content/                  公开内容数据 + README
+├─ lab/ice-failure/          公开演示
+├─ agent/                    本页 + manifest
+├─ workbench/                本地工作台（页面 + server.py）
+│  ├─ private.example.json   可提交样板
+│  └─ private.json           私有，不提交
+├─ AGENTS.md / llms.txt      AI 交接
+└─ README.md                 人读入口</pre>
+        <div class="recipe">
+          <h3>一句话判断新内容放哪</h3>
+          <p>愿意让任何拿到链接的人看到 → <code>content/</code> 或公开页面；需要登录、含个人路径、未发表数据、审稿意见 → <code>workbench/</code> 本地层；含 token → <code>private.json</code>，永不提交。</p>
+        </div>
+      </section>
+
+      <section class="doc-section" id="content">
+        <p class="doc-kicker">03 / CONTENT</p>
+        <h2>加一张卡，只需要改数据。</h2>
+        <p class="doc-lede">
+          首页的研究、项目、当前焦点都由 <code>content/site-content.js</code> 渲染。
+          HTML 只留骨架，<code>assets/js/home.js</code> 负责把数组变成卡片。不要复制首页 HTML 来加内容。
+        </p>
+        <ol class="steps">
+          <li><b>改数组</b><span>在 <code>research</code>、<code>projects</code> 或 <code>focus</code> 里加一个对象，保持字段完整。</span></li>
+          <li><b>写公开摘要</b><span>只写愿意公开的问题、方法、阶段；不要放未发表数据、合作方材料或审稿意见。</span></li>
+          <li><b>刷新验证</b><span>静态服务器打开首页，确认新卡片出现、控制台无报错、390px 无横向溢出。</span></li>
+          <li><b>同步文档</b><span>如果改了字段名或布局，更新 <code>content/README.md</code> 和 <code>home.js</code>；结构变化再更新本页与 manifest。</span></li>
+        </ol>
+        <h3>研究卡示例</h3>
+        <pre class="code">{
+  id: "p04",
+  index: "04",
+  title: "冰区船舶运动规划",
+  en: "Motion planning for ships in ice",
+  stage: "前期调研",
+  status: "research",
+  summary: "一句话说明问题、方法和当前阶段。",
+  tags: ["Ice", "Planning", "Motion"],
+  detail: "工作区：论文/4.xxx"
+}</pre>
+        <table class="doc-table">
+          <thead><tr><th>数组</th><th>首页位置</th><th>关键字段</th></tr></thead>
+          <tbody>
+            <tr><td>focus</td><td>当前在做</td><td>code / title / stage / status / note / tags</td></tr>
+            <tr><td>research</td><td>研究方向</td><td>id / index / title / en / stage / summary / tags / detail</td></tr>
+            <tr><td>projects</td><td>项目与演示</td><td>badge / href / action + 同上</td></tr>
+            <tr><td>timeline</td><td>关于区</td><td>when / title / note</td></tr>
+          </tbody>
+        </table>
+        <p class="doc-lede" style="margin-top:14px">完整字段规则、图片扩展、计划种子说明见 <a href="../content/README.md">content/README.md</a>。</p>
+      </section>
+
+      <section class="doc-section" id="workbench">
+        <p class="doc-kicker">04 / WORKBENCH</p>
+        <h2>本地层：文件、LaTeX、计划与笔记。</h2>
+        <p class="doc-lede">
+          工作台由 <code>workbench/server.py</code> 提供，只绑定 127.0.0.1。公开部署时页面会显示
+          “本地服务未连接”，文件与 LaTeX 按钮自动禁用；这是预期行为，不要伪造在线。
+        </p>
+        <pre class="code">cd xiaot310-site
+python workbench/server.py
+<span class="c"># → http://127.0.0.1:8765/workbench/</span></pre>
+        <table class="doc-table">
+          <thead><tr><th>端点</th><th>作用</th><th>边界</th></tr></thead>
+          <tbody>
+            <tr><td>/api/status</td><td>服务状态、工作区根路径</td><td>只读</td></tr>
+            <tr><td>/api/files</td><td>最近文件 / 搜索</td><td>只扫 roots；排除敏感目录</td></tr>
+            <tr><td>/api/tools</td><td>LaTeX 是否配置</td><td>不返回私链</td></tr>
+            <tr><td>/api/open</td><td>系统默认程序打开</td><td>仅 researchRoot 内</td></tr>
+            <tr><td>/api/reveal</td><td>资源管理器定位</td><td>仅 researchRoot 内</td></tr>
+            <tr><td>/go/latex</td><td>302 到私有项目</td><td>链接不进公开页面</td></tr>
+          </tbody>
+        </table>
+        <div class="recipe">
+          <h3>安全底线</h3>
+          <p>只绑 <code>127.0.0.1</code>；<code>private.json</code> 静态访问返回 404；<code>POST</code> 只接受同源 JSON；拒绝 <code>..</code> 越界、敏感目录和私链文件；默认排除个人文件、奖学金、身份证、学历、学位、宿舍、比赛。</p>
+        </div>
+        <p class="doc-lede" style="margin-top:14px">启动参数、配置字段、备份与常见问题见 <a href="../workbench/README.md">workbench/README.md</a>。</p>
+      </section>
+
+      <section class="doc-section" id="deploy">
+        <p class="doc-kicker">05 / DEPLOY</p>
+        <h2>分享公开层，不分享 localhost。</h2>
+        <p class="doc-lede">
+          推荐仓库名 <code>xiaot310.github.io</code>，部署分支 <code>main</code>、目录 <code>(root)</code>。
+          只上传公开层；<code>workbench/private.json</code> 已被 <code>.gitignore</code> 排除。
+        </p>
+        <div class="flow">
+          <div><b>01</b><span>检查公开内容</span></div><div class="flow-arrow">→</div>
+          <div><b>02</b><span>push 到 GitHub</span></div><div class="flow-arrow">→</div>
+          <div><b>03</b><span>Settings → Pages</span></div><div class="flow-arrow">→</div>
+          <div><b>04</b><span>验证离线态</span></div>
+        </div>
+        <pre class="code"><span class="c"># 本地预览公开层</span>
+python -m http.server 8080
+
+<span class="c"># 不要提交</span>
+workbench/private.json
+个人文件/ · 奖学金/ · 身份证/ · 学历/ · 学位/</pre>
+        <div class="recipe">
+          <h3>关于“权限”</h3>
+          <p>GitHub Pages 是公开静态托管，不能按用户授权。需要“只给某些人看”时，必须另做带登录的后端；当前站点的策略是公开内容公开、私有内容只在本机，而不是假装有访问控制。</p>
+        </div>
+      </section>
+
+      <section class="doc-section" id="verify">
+        <p class="doc-kicker">06 / VERIFY</p>
+        <h2>每次改完，跑一遍可验证的清单。</h2>
+        <p class="doc-lede">自检只检查静态文件是否可读、manifest 是否可解析、内容数据是否存在；工作台 API 是可选检查，离线不算失败。</p>
+        <div class="check-card">
+          <div class="check-head">
+            <div><span class="check-dot" id="checkDot"></span><b id="checkSummary">未运行</b></div>
+            <button class="mini-btn" type="button" id="runCheck">运行自检</button>
+          </div>
+          <ul class="check-list" id="checkList">
+            <li class="muted">点击“运行自检”，会请求 manifest、内容数据、llms.txt、工作台页面；本地 API 仅作可选提示。</li>
+          </ul>
+        </div>
+        <div class="limit-grid" style="margin-top:22px">
+          <div>
+            <h3>必须通过</h3>
+            <ul class="plain-list">
+              <li>首页、演示、Agent、工作台页面可打开</li>
+              <li>首页数据卡来自 content/site-content.js</li>
+              <li>390px 无横向溢出，控制台无报错</li>
+              <li>公开层不含私链/token/个人材料</li>
+            </ul>
+          </div>
+          <div>
+            <h3>本地可选</h3>
+            <ul class="plain-list">
+              <li>/api/status 返回 ok</li>
+              <li>/api/files 不含敏感目录</li>
+              <li>/workbench/private.json 返回 404</li>
+              <li>/go/latex 只在本机 302</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="doc-section" id="prompt">
+        <p class="doc-kicker">07 / HANDOFF PROMPT</p>
+        <h2>复制给下一个 AI。</h2>
+        <p class="doc-lede">这段 Prompt 会随 <code>site.js</code> 更新；改了结构或隐私规则，记得同步它。</p>
+        <div class="prompt-block">
+          <div class="prompt-head"><span>HANDOFF / PLAIN TEXT</span><button class="mini-btn" type="button" data-copy-handoff>复制 ⧉</button></div>
+          <pre class="prompt" id="promptText">加载中…</pre>
+        </div>
+      </section>
+
+      <section class="doc-section" id="ask">
+        <p class="doc-kicker">08 / LOCAL RETRIEVAL</p>
+        <h2>问交接文档，不调用大模型。</h2>
+        <p class="doc-lede">这是关键词检索，不是聊天模型；它只从本页下面的知识条目里找最接近的 1–2 条，回答不了会直接说没有。</p>
+        <div class="console">
+          <div class="console-head"><span class="ch-dot"></span><span>handoff.console</span><span class="ch-badge">KEYWORD / NO LLM</span></div>
+          <div class="console-log" id="agentLog">
+            <div class="msg"><span class="msg-avatar">AI</span><div class="msg-body"><p>我是这个站点交接文档的检索器。可以问：怎么加一张项目卡？private.json 会不会上传？工作台怎么启动？</p></div></div>
+          </div>
+          <div class="console-suggest" id="agentSuggest">
+            <button type="button" data-q="怎么加一张项目卡">怎么加一张项目卡</button>
+            <button type="button" data-q="private.json 会被上传吗">private.json 会被上传吗</button>
+            <button type="button" data-q="工作台怎么启动">工作台怎么启动</button>
+            <button type="button" data-q="怎么部署">怎么部署</button>
+          </div>
+          <form class="console-form" id="agentForm">
+            <input id="agentInput" type="text" placeholder="输入问题，按 Enter…" autocomplete="off">
+            <button type="submit">检索</button>
+          </form>
+          <div class="console-note">LOCAL KEYWORD RETRIEVAL · 不是大模型 · 不联网</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="wrap closing" style="margin-top:20px">
+    <div>
+      <p class="kicker" style="color:#8fe0cf">END / HANDOFF</p>
+      <h2 style="margin-top:10px;color:#fff;font-size:1.8rem;letter-spacing:-.03em">交接不是礼貌，是降低下一次修改的成本。</h2>
+      <p>改内容先看数据，改结构先看 AGENTS.md，碰私有文件先停下来确认。这样下一个人（或 AI）就不必重新猜。</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="../index.html">回到主页 <span class="arw">→</span></a>
+      <button class="btn btn-outline-light" type="button" data-copy-handoff>复制 Prompt <span class="arw">⧉</span></button>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span class="footer-brand" data-site="brand">YITING ZHANG</span>
+    <nav class="footer-links" aria-label="页脚导航">
+      <a href="../index.html">主页</a>
+      <a href="../workbench/index.html">工作台</a>
+      <a href="../lab/ice-failure/index.html">演示</a>
+      <a href="../llms.txt">llms.txt</a>
+      <a href="https://github.com/xiaot310" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <p class="footer-note">© <span data-site="year">2026</span> <span data-site="owner">张义廷</span> · 公开内容可分享，私有文件仅本地</p>
+  </div>
+</footer>
+
+<script src="../site.config.js"></script>
+<script src="knowledge.js"></script>
+<script src="../assets/js/site.js"></script>
+<script src="agent.js"></script>
+</body>
+</html>

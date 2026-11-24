@@ -1,0 +1,62 @@
+# xiaot310-site — 张义廷的个人研究主页 + 本地工作台
+
+> Owner: 张义廷 (Yiting ZHANG), GitHub xiaot310, Shanghai Jiao Tong University.
+> Public site: https://xiaot310.github.io/
+> Repo: https://github.com/xiaot310/xiaot310.github.io
+
+## What this is
+
+A zero-dependency static personal research site plus a localhost-only research workbench.
+The public layer is safe to deploy to GitHub Pages. The local layer is a Python standard-library
+server bound to 127.0.0.1, used for files, LaTeX, planning, notes, and literature links.
+
+## Public pages
+
+- / — personal homepage: profile, current focus, research, projects, workbench entry.
+- /lab/ice-failure/ — interactive sea-ice failure criteria demo (Canvas 2D + σ3 slice).
+- /agent/ — handoff documentation and keyword retrieval.
+- /workbench/ — workbench UI. On public hosting it intentionally shows "local service offline".
+
+## Content model
+
+Edit content/site-content.js to add or update public cards:
+
+- profile: name, role, summary, interests
+- focus[]: code, title, stage, status, note, tags
+- research[]: id, index, title, en, stage, status, summary, tags, detail
+- projects[]: id, index, title, en, summary, tags, badge, href, action
+- timeline[]: when, title, note
+
+assets/js/home.js renders the cards. Do not copy homepage HTML to add an entry.
+Full schema: content/README.md.
+
+## Local workbench
+
+Start:
+
+    python workbench/server.py
+    # http://127.0.0.1:8765/workbench/
+
+Endpoints: /api/status, /api/files, /api/tools, /api/open, /api/reveal, /go/latex, /go/draw.
+Only 127.0.0.1. Private config workbench/private.json is gitignored and blocked from static access.
+Sensitive directories (个人文件, 奖学金, 身份证, 学历, 学位, 宿舍, 比赛) are excluded from scanning.
+
+## Privacy
+
+- Public layer: safe to share; no private files, no LaTeX token, no unpublished data.
+- Private layer: local only; not reachable from GitHub Pages.
+- GitHub Pages cannot enforce per-user permissions. Real access control requires a backend.
+- Do not commit workbench/private.json or any personal documents.
+
+## Deployment
+
+Push the public layer to a GitHub Pages repository (recommended: xiaot310.github.io),
+Settings → Pages → Deploy from a branch → main / (root). Keep .nojekyll.
+Never upload private.json, personal files, or preview temp images.
+
+## Read next
+
+- AGENTS.md
+- content/README.md
+- workbench/README.md
+- agent/manifest.json
