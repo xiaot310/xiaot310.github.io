@@ -244,3 +244,62 @@
   .eyebrow-long { display: none; }
   .eyebrow-short { display: inline; }
 }
+
+/* ---------------- readability pass ---------------- */
+.hero-personal .eyebrow { font-size: 10px; }
+.hero-personal .lede { font-size: 15.5px; line-height: 1.85; }
+.hero-meta { font-size: 11.5px; }
+.quick-dock .dock-item b { font-size: 12.5px; }
+.quick-dock .dock-item small { font-size: 10px; }
+.focus-card h3 { font-size: 16px; }
+.focus-card p { font-size: 12.5px; line-height: 1.75; }
+.status-pill { font-size: 8.5px; }
+.tag-chip { font-size: 9px; }
+.focus-link { font-size: 10px; }
+.research-card h3 { font-size: 17px; }
+.rc-en { font-size: 9px; }
+.rc-summary { font-size: 12.5px; line-height: 1.8; }
+.rc-foot { font-size: 9px; }
+.project-card h3 { font-size: 18px; }
+.pc-en { font-size: 9px; }
+.pc-summary { font-size: 12.5px; line-height: 1.75; }
+.pc-action { font-size: 9px; }
+.section-head p { font-size: 12.5px; line-height: 1.8; }
+.wb-bullets li { font-size: 12px; line-height: 1.75; }
+.storage-row span { font-size: 11px; }
+.storage-row b { font-size: 10px; }
+.storage-row small { font-size: 10px; }
+.about-text p { font-size: 14.5px; }
+.about-fact b { font-size: 12.5px; }
+.about-fact span { font-size: 9px; }
+.timeline .tl-when { font-size: 9px; }
+.timeline .tl-title { font-size: 12.5px; }
+.timeline .tl-note { font-size: 10px; }
+.footer-note { font-size: 10px; }
+.workbench-band p { font-size: 13.5px; }
+.agent-band p { font-size: 13px; }
+@media (max-width: 760px) {
+  .hero-personal .lede { font-size: 14.5px; }
+  .focus-card p, .rc-summary, .pc-summary { font-size: 12px; }
+  .about-text p { font-size: 13.5px; }
+}
+
+/* ---------------- final readability pass ---------------- */
+.hero-personal .lede { font-size: 16px; }
+.quick-dock .dock-item b { font-size: 13px; }
+.quick-dock .dock-item small { font-size: 10.5px; }
+.focus-card p { font-size: 13px; }
+.focus-card h3 { font-size: 16.5px; }
+.rc-summary, .pc-summary { font-size: 13px; }
+.section-head p { font-size: 13px; }
+.about-text p { font-size: 15px; }
+.about-fact b { font-size: 13px; }
+.timeline .tl-title { font-size: 13px; }
+.workbench-band p { font-size: 14px; }
+@media (max-width: 760px) {
+  .hero-personal .lede { font-size: 15px; }
+  .focus-card p, .rc-summary, .pc-summary { font-size: 12.5px; }
+  .section-head p { font-size: 12.5px; }
+}
+
+.wb-band-note { margin-top: 14px; font-size: 10.5px; line-height: 1.7; color: rgba(220,235,242,.5); }

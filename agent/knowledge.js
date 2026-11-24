@@ -69,6 +69,18 @@ window.AGENT_KNOWLEDGE = [
     body: '根目录是主页；lab/ice-failure/ 是海冰演示；agent/ 是交接页；workbench/ 是本地工作台；content/ 是首页数据；assets/ 是 CSS/JS/物理内核。工作台 hash：today、plan、files、tools、literature、notes。'
   },
   {
+    id: 'oc',
+    title: 'OC 课程怎么同步',
+    tags: ['OC', 'Canvas', '课程', '待办', '公告', 'token', '令牌'],
+    body: '工作台 OC 标签页用 Canvas 个人访问令牌只读同步课程、Todo 和公告。在 OC 的 Account → Settings → New Access Token 创建令牌，粘贴保存。令牌只在本机 workbench/oc.json，不进入 Git；不要输入学校密码。学校关闭令牌入口时无法同步。'
+  },
+  {
+    id: 'autostart',
+    title: '不打开 Python 怎么启动工作台',
+    tags: ['启动', '自动', 'autostart', 'python', '后台', '快捷方式'],
+    body: 'Windows 登录时已设置后台快捷方式，用 pythonw 启动服务，没有终端窗口。也可双击 start-workbench-hidden.bat 立即后台启动并打开页面；stop-workbench.bat 停止，install-autostart.bat 重设。网页没有权限自己启动本地程序。'
+  },
+  {
     id: 'agent',
     title: '下一个 AI 应该先读什么',
     tags: ['agent', '交接', 'agents.md', 'manifest', 'llms'],

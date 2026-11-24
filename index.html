@@ -150,22 +150,24 @@
       <h2>公开展示在云端，<br>研究工作留在本地。</h2>
       <p>
         这个站点有两层：GitHub Pages 上的公开主页，以及只在 127.0.0.1 运行的本地工作台。
-        工作台能列出最近文件、打开 LaTeX、画图、查文献、管理计划；这些私有内容不会上传。
+        工作台能列出最近文件、打开 LaTeX、画图、查文献、管理计划，并只读同步 OC 课程与公告；这些私有内容不会上传。
       </p>
       <ul class="wb-bullets">
         <li><b>01</b><span>计划、笔记、手绘默认存在浏览器 localStorage；可导出 JSON / PNG 备份。</span></li>
         <li><b>02</b><span>文件列表由本地 Python 服务读取研究工作区，只绑定本机，不暴露到公网。</span></li>
         <li><b>03</b><span>LaTeX 私密链接放在 workbench/private.json，部署时被 .gitignore 排除。</span></li>
+        <li><b>04</b><span>OC 用本机保存的 Canvas 访问令牌只读同步课程/待办/公告，不需要学校密码。</span></li>
       </ul>
       <div class="wb-actions">
         <a class="btn btn-light" href="workbench/index.html">启动本地工作台 <span class="arw">→</span></a>
         <a class="btn btn-outline-light" href="workbench/README.md">使用说明 <span class="arw">↗</span></a>
         <button class="btn btn-outline-light" type="button" data-copy-handoff>复制交接 Prompt <span class="arw">⧉</span></button>
       </div>
+      <p class="wb-band-note">已设置 Windows 登录后台启动；也可双击 start-workbench-hidden.bat。OC 只读同步，不保存学校密码。</p>
     </div>
     <div class="storage-map reveal" aria-label="存储位置说明">
       <div class="storage-row public"><span>公开主页 · 研究展示</span><b>GitHub Pages</b><small>任何人可访问；只放可公开内容</small></div>
-      <div class="storage-row private"><span>本地工作台 · 文件 / LaTeX</span><b>127.0.0.1:8765</b><small>只在本机；服务停止后不可访问</small></div>
+      <div class="storage-row private"><span>本地工作台 · 文件 / LaTeX / OC</span><b>127.0.0.1:8765</b><small>只在本机；服务停止后不可访问</small></div>
       <div class="storage-row"><span>计划 / 笔记 / 手绘</span><b>浏览器 localStorage</b><small>存在当前浏览器；可导出备份</small></div>
       <div class="storage-row"><span>私有链接与配置</span><b>workbench/private.json</b><small>本地文件；已在 .gitignore 中排除</small></div>
     </div>

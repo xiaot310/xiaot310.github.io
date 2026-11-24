@@ -338,3 +338,170 @@
 .tn-dot.mid { background: #b2863d; }
 .tn-title { font-size: 10px; color: var(--wb-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tn-project { font-family: var(--wb-mono); font-size: 7.5px; color: var(--wb-muted); }
+
+/* ---------------- OC / Canvas ---------------- */
+.qa-wide { grid-column: 1 / -1; }
+.oc-setup { border: 1px solid var(--wb-line); background: var(--wb-card); border-radius: 10px; padding: 16px; }
+.oc-security { display: grid; gap: 4px; padding: 11px 13px; border: 1px solid rgba(10,106,131,.18); background: rgba(10,106,131,.04); border-radius: 7px; }
+.oc-security b { font-size: 11.5px; color: var(--wb-teal-2); }
+.oc-security span { font-size: 10.5px; line-height: 1.7; color: var(--wb-muted); }
+.oc-form { display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.oc-form label { display: grid; gap: 4px; font-family: var(--wb-mono); font-size: 8.5px; color: var(--wb-muted); }
+.oc-form label:first-child { flex: 0 0 210px; }
+.oc-form label:nth-child(2) { flex: 1 1 300px; }
+.oc-form input { border: 1px solid var(--wb-line); border-radius: 6px; background: #fff; padding: 8px 9px; font-size: 11.5px; width: 100%; }
+.oc-form input[readonly] { background: rgba(17,26,33,.03); color: var(--wb-muted); }
+.oc-form .wb-btn { padding: 8px 12px; font-size: 10.5px; }
+.oc-help { font-family: var(--wb-mono); font-size: 9px; color: var(--wb-teal); text-decoration: underline; text-underline-offset: 3px; padding-bottom: 7px; }
+.oc-hint { margin-top: 10px; font-size: 9.5px; line-height: 1.7; color: var(--wb-muted); }
+.oc-stats { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--wb-line); border-bottom: 1px solid var(--wb-line); margin-bottom: 14px; }
+.oc-stat { padding: 12px 15px; border-left: 1px solid var(--wb-line-soft); }
+.oc-stat:first-child { border-left: 0; padding-left: 0; }
+.oc-stat span { display: block; font-family: var(--wb-mono); font-size: 8.5px; color: var(--wb-muted); letter-spacing: .06em; }
+.oc-stat b { display: block; margin-top: 3px; font-family: var(--wb-mono); font-size: 22px; font-weight: 500; }
+.oc-stat small { display: block; margin-top: 2px; font-size: 9px; color: var(--wb-muted); }
+.oc-grid { display: grid; grid-template-columns: 1.05fr 1fr 1.05fr; gap: 12px; }
+.oc-grid .wb-card { margin-bottom: 0; min-width: 0; }
+.oc-list { display: grid; }
+.oc-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--wb-line-soft); }
+.oc-row:last-child { border-bottom: 0; }
+.oc-row:hover .oc-main b { color: var(--wb-teal); }
+.oc-main { min-width: 0; }
+.oc-main b { display: block; font-size: 11px; font-weight: 500; line-height: 1.45; color: var(--wb-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color .18s; }
+.oc-main small { display: block; margin-top: 2px; font-size: 8.5px; color: var(--wb-muted); line-height: 1.45; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.oc-arrow { font-family: var(--wb-mono); font-size: 9px; color: var(--wb-muted); flex: none; }
+.oc-due { font-family: var(--wb-mono); font-size: 8px; color: var(--wb-muted); white-space: nowrap; flex: none; }
+.oc-due.late { color: var(--wb-orange); }
+.oc-empty { padding: 22px 8px; text-align: center; font-size: 10px; line-height: 1.7; color: var(--wb-muted); }
+.oc-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--wb-line-soft); font-family: var(--wb-mono); font-size: 8.5px; color: var(--wb-muted); }
+@media (max-width: 1080px) {
+  .oc-grid { grid-template-columns: 1fr 1fr; }
+  .oc-grid .wb-card:last-child { grid-column: 1 / -1; }
+  .oc-stats { grid-template-columns: 1fr 1fr; }
+  .oc-stat:nth-child(3) { border-left: 0; padding-left: 0; }
+}
+@media (max-width: 760px) {
+  .oc-form label:first-child, .oc-form label:nth-child(2) { flex-basis: 100%; }
+  .oc-form .wb-btn { width: 100%; }
+  .oc-grid { grid-template-columns: 1fr; }
+  .oc-grid .wb-card:last-child { grid-column: auto; }
+  .oc-stats { grid-template-columns: 1fr 1fr; }
+  .oc-stat { padding: 9px 10px; }
+  .oc-stat b { font-size: 19px; }
+}
+
+/* ---------------- readability pass ---------------- */
+.wb-page { font-size: 14px; }
+.wb-brand b { font-size: 11px; }
+.wb-brand small { font-size: 8.5px; }
+.wb-tabs a { font-size: 12.5px; }
+.wb-kicker { font-size: 9.5px; }
+.wb-lede { font-size: 13.5px; }
+.wb-hero h1 { font-size: clamp(1.85rem, 3.4vw, 2.6rem); }
+.wb-stat span { font-size: 9px; }
+.wb-stat b { font-size: 26px; }
+.wb-stat small { font-size: 9.5px; }
+.wb-card-head h2 { font-size: 13.5px; }
+.wb-card-head a, .wb-mini { font-size: 9px; }
+.tf-title { font-size: 12px; }
+.tf-code { font-size: 9px; }
+.tf-stage { font-size: 8.5px; }
+.qa b { font-size: 11.5px; }
+.qa small { font-size: 9px; }
+.mini-row { font-size: 10.5px; }
+.mini-row b { font-size: 9.5px; }
+.wb-section-head p { font-size: 11.5px; }
+.wb-section-head h2 { font-size: 1.8rem; }
+.task-form input, .task-form select { font-size: 11.5px; }
+.task-form button { font-size: 11px; }
+.kb-head b { font-size: 11.5px; }
+.kb-head span { font-size: 9px; }
+.task .tt { font-size: 11.5px; }
+.task .tm { font-size: 8px; }
+.task .note { font-size: 9.5px; }
+.file-main b { font-size: 11.5px; }
+.file-main small, .file-dir { font-size: 8.5px; }
+.file-when { font-size: 8.5px; }
+.file-open button { font-size: 9px; padding: 3px 6px; }
+.file-summary { font-size: 9px; }
+.folder-shortcuts button { font-size: 10px; }
+.tool-card h3 { font-size: 14px; }
+.tool-card p { font-size: 11.5px; }
+.tool-status { font-size: 8.5px; }
+.tool-inline .wb-btn { font-size: 9.5px; }
+.lit-form input { font-size: 12px; }
+.lit-form button { font-size: 11px; }
+.lit-sources button { font-size: 10px; }
+.reading-row b { font-size: 11.5px; }
+.reading-row small { font-size: 8.5px; }
+.lit-tips li { font-size: 11px; }
+.note-area { font-size: 13px; }
+.local-banner b { font-size: 11.5px; }
+.local-banner span { font-size: 10.5px; }
+.wb-footnote { font-size: 9.5px; }
+@media (max-width: 760px) {
+  .wb-lede { font-size: 13px; }
+  .wb-stat b { font-size: 22px; }
+  .task .tt { font-size: 11.5px; }
+  .oc-main b { font-size: 11.5px; }
+}
+
+/* ---------------- second readability pass: key small text ---------------- */
+.wb-tabs a { font-size: 13px; }
+.wb-lede { font-size: 14px; }
+.wb-stat span { font-size: 9.5px; }
+.wb-stat small { font-size: 10px; }
+.tf-title { font-size: 12.5px; }
+.qa b { font-size: 12px; }
+.qa small { font-size: 9.5px; }
+.task .tt { font-size: 12px; }
+.task .tm { font-size: 8.5px; }
+.task .note { font-size: 10px; }
+.file-main b { font-size: 12px; }
+.file-main small, .file-dir { font-size: 9px; }
+.file-when { font-size: 9px; }
+.file-open button { font-size: 9.5px; }
+.file-summary { font-size: 9.5px; }
+.tool-card p { font-size: 12px; }
+.lit-tips li { font-size: 11.5px; }
+.oc-main b { font-size: 12.5px; }
+.oc-main small { font-size: 9.5px; }
+.oc-due { font-size: 9.5px; }
+.oc-security b { font-size: 12.5px; }
+.oc-security span { font-size: 11.5px; }
+.oc-hint { font-size: 10.5px; }
+.oc-form label { font-size: 9.5px; }
+.oc-form input { font-size: 12.5px; }
+.oc-stat span { font-size: 9.5px; }
+.oc-stat small { font-size: 10px; }
+.oc-footer { font-size: 9.5px; }
+.oc-empty { font-size: 11px; }
+@media (max-width: 760px) {
+  .wb-tabs a { font-size: 12.5px; }
+  .oc-main b { font-size: 12px; }
+  .file-main b { font-size: 11.5px; }
+}
+
+/* ---------------- final readability pass ---------------- */
+.wb-lede { font-size: 14.5px; }
+.wb-section-head p { font-size: 12.5px; }
+.wb-card-head h2 { font-size: 14.5px; }
+.tf-title { font-size: 13px; }
+.qa b { font-size: 12.5px; }
+.task .tt { font-size: 13px; }
+.file-main b { font-size: 13px; }
+.file-main small { font-size: 9.5px; }
+.oc-main b { font-size: 13.5px; }
+.oc-main small { font-size: 10.5px; }
+.oc-security span { font-size: 12.5px; }
+.oc-hint { font-size: 11px; }
+.oc-stat span { font-size: 10px; }
+.oc-stat small { font-size: 10.5px; }
+.lit-tips li { font-size: 12px; }
+.note-area { font-size: 14px; }
+@media (max-width: 760px) {
+  .wb-lede { font-size: 13.5px; }
+  .wb-section-head p { font-size: 12px; }
+  .task .tt { font-size: 12.5px; }
+  .oc-main b { font-size: 13px; }
+}

@@ -22,7 +22,8 @@ GitHub Pages 没有登录/权限系统，真正的访问控制需要后端；当
    直接由静态文件服务器提供；GitHub Pages 可直接部署。
 2. **本地服务器只用 Python 标准库。** 不引入 Flask/FastAPI；不要求 `pip install`。
 3. **私有配置绝不提交。** `workbench/private.json` 含 LaTeX token 和本地路径，
-   已在 `.gitignore` 中排除；`server.py` 也会拦截它的静态访问。
+   `workbench/oc.json` 含 Canvas 访问令牌；两者都在 `.gitignore` 中排除，`server.py` 也会拦截静态访问。
+   **不要实现密码登录，也不要接收学校密码。** OC 只接受个人访问令牌。
 4. **不扫描/不展示敏感材料。** 默认排除 `个人文件`、`奖学金`、`身份证`、
    `学历`、`学位`、`宿舍`、`比赛`；不要为了“文件更多”移除。
 5. **内容优先改数据。** 新增研究/项目卡改 `content/site-content.js`，
@@ -54,7 +55,8 @@ python workbench/server.py
 # 自动打开 http://127.0.0.1:8765/workbench/
 ```
 
-Windows 也可双击 `start-workbench.bat`。没有 `npm install`，没有构建。
+Windows 不需要手动开 Python：登录时后台启动（`install-autostart.bat` 已配置），
+也可双击 `start-workbench-hidden.bat`。没有 `npm install`，没有构建。
 
 ## 4. 目录
 
@@ -80,9 +82,15 @@ xiaot310-site/
 │  ├─ workbench.css
 │  ├─ workbench.js            计划/文件/工具/文献/笔记
 │  ├─ server.py               本地服务器（标准库）
+│  ├─ oc_sync.py              OC / Canvas 只读同步
 │  ├─ private.example.json    配置样板
 │  ├─ private.json            本地私有（不提交）
+│  ├─ oc.json / oc-cache.json 本机 OC 令牌/缓存（不提交）
+│  ├─ start-hidden.vbs        后台启动
 │  └─ README.md               启动/API/安全/备份
+├─ start-workbench-hidden.bat 一键后台启动
+├─ install-autostart.bat      登录自动启动
+├─ stop-workbench.bat         停止后台服务
 ├─ start-workbench.bat
 ├─ llms.txt
 ├─ AGENTS.md
@@ -94,7 +102,7 @@ xiaot310-site/
 - `/` — 个人主页。
 - `/lab/ice-failure/` — 海冰失效交互演示。
 - `/agent/` — AI 交接、内容更新说明、机器可读清单。
-- `/workbench/` — 本地工作台（hash：`#today|#plan|#files|#tools|#literature|#notes`）。
+- `/workbench/` — 本地工作台（hash：`#today|#plan|#files|#tools|#oc|#literature|#notes`）。
 - `/api/*`、`/go/latex`、`/go/draw` — 只在本地 `server.py` 提供。
 
 ## 6. 内容契约（摘要）
@@ -118,6 +126,11 @@ xiaot310-site/
 | GET | `/api/tools` | LaTeX/draw 配置、roots 名称 |
 | POST | `/api/open` | `{path}`，系统默认程序打开 |
 | POST | `/api/reveal` | `{path}`，资源管理器定位 |
+| GET | `/api/oc/status` | OC 是否配置、上次同步、计数（不含 token） |
+| GET | `/api/oc/data` | 本机 OC 缓存 |
+| POST | `/api/oc/config` | 验证并保存 Canvas 访问令牌 |
+| POST | `/api/oc/sync` | 拉取课程 / Todo / 公告 |
+| POST | `/api/oc/clear` | 清除本机 OC 令牌与缓存 |
 | GET | `/go/latex` | 302 到私链（不暴露在页面） |
 | GET | `/go/draw` | 302 到 draw.io |
 
@@ -125,7 +138,8 @@ xiaot310-site/
 
 - 只绑 `127.0.0.1`，不绑 `0.0.0.0`。
 - `POST` 只接受 JSON、同源、`researchRoot` 内路径；拒绝越界/敏感目录/私链文件。
-- 静态访问 `workbench/private.json` 返回 404。
+- 静态访问 `workbench/private.json`、`workbench/oc.json`、`workbench/oc-cache.json` 返回 404。
+- OC 只向 `https://oc.sjtu.edu.cn` 请求，只接受 Canvas 个人访问令牌，绝不接收密码。
 - 文件上限 30 MB、最多 800 个；缓存文件跳过。
 - 公开页面的本地按钮在离线时自动禁用；不要为了“看起来能用”去掉降级提示。
 
@@ -141,7 +155,7 @@ xiaot310-site/
 
 ## 9. 部署
 
-1. 只把公开层放进 GitHub 仓库；**不要** 把 `workbench/private.json`、个人文件、`_preview/` 上传。
+1. 只把公开层放进 GitHub 仓库；**不要** 把 `workbench/private.json`、`workbench/oc.json`、`oc-cache.json`、个人文件、`_preview/` 上传。
 2. 仓库建议 `xiaot310.github.io`；Settings → Pages → Deploy from a branch → `main / (root)`。
 3. `.nojekyll` 保留。
 4. 部署后检查 `/`、`/lab/ice-failure/`、`/agent/`、`/workbench/`（离线态）；
@@ -153,7 +167,8 @@ xiaot310-site/
 - [ ] 首页 1440 / 390 宽无横向溢出，控制台无报错。
 - [ ] 首页数据卡来自 `content/site-content.js`；新增一条能出现。
 - [ ] 工作台启动后 `/api/status` 为 ok；文件列表不含敏感目录。
-- [ ] `/workbench/private.json` 返回 404；`/go/latex` 仅本机 302。
+- [ ] `/workbench/private.json`、`/workbench/oc.json` 返回 404；`/go/latex` 仅本机 302。
+- [ ] OC 未配置时只显示令牌设置，不要求密码；清除令牌后不残留缓存。
 - [ ] 计划增删/移动/导出/导入可用；笔记/手绘刷新后还在。
 - [ ] 公开部署的 `/workbench/` 显示“本地服务未连接”，不伪造在线。
 - [ ] `agent` 页面/`manifest.json`/`llms.txt` 与新结构一致。

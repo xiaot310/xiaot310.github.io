@@ -4,12 +4,13 @@
 仓库：https://github.com/xiaot310/xiaot310.github.io
 
 个人研究主页 + 本地工作台。公开层是纯静态页面，可以部署到 GitHub Pages；
-本地层只在本机运行，用来打开文件、LaTeX、画图、查文献和管理计划。
+本地层只在本机运行，用来打开文件、LaTeX、画图、查文献、管理计划，以及只读同步 OC 课程与公告。
 
 ## 这是什么
 
 - **公开主页**：个人介绍、研究方向、项目演示、当前在做、AI 交接说明。
-- **本地工作台**：今日、计划、最近文件、工具、文献、笔记；文件与私链不出本机。
+- **本地工作台**：今日、计划、最近文件、工具、OC、文献、笔记；文件与私链不出本机。
+- **OC 同步**：用 Canvas 个人访问令牌读取课程、待办和公告；不需要也不保存学校密码。
 - **海冰演示**：四种失效准则的二维包络与三维主应力切片，可分享带参数的链接。
 - **Agent 模块**：给未来 AI 的交接文档、内容更新规则、机器可读清单。
 
@@ -24,15 +25,30 @@ python -m http.server 8080
 
 打开 `http://127.0.0.1:8080/`。
 
-### 启动完整工作台
+### 启动完整工作台（不用打开 Python）
 
-Windows 双击 `start-workbench.bat`，或：
+**已经设置好登录自动启动**：下次登录 Windows 时，本地服务会在后台启动（无终端窗口），
+直接打开收藏夹里的 `http://127.0.0.1:8765/workbench/` 即可。
+
+当前想立即启动/打开，双击站点根目录：
+
+```text
+start-workbench-hidden.bat
+```
+
+它会后台启动服务并打开浏览器，不显示 Python 终端。
+
+- 换电脑或需要重新设置：双击 `install-autostart.bat`
+- 停止后台服务：双击 `stop-workbench.bat`
+- 想移除自动启动：双击 `remove-autostart.bat`
+
+命令行/排障时才需要手动运行：
 
 ```bash
 python workbench/server.py
 ```
 
-它会打开 `http://127.0.0.1:8765/workbench/`。要求 Python 3.9+，不需要安装依赖。
+要求 Python 3.9+，不需要安装依赖。
 
 ### 部署公开层
 
@@ -48,6 +64,7 @@ Settings → Pages → Deploy from a branch → `main / (root)`。
 | 计划、笔记、手绘、阅读清单 | 当前浏览器 localStorage | 默认不共享；可导出 |
 | 最近文件、打开文件 | 本机 Python 服务 | 不能，只在本机 |
 | LaTeX 私有项目 | 本机 `private.json` → 跳转 | 不能 |
+| OC 访问令牌 / 课程缓存 | 本机 `workbench/oc.json` / `oc-cache.json` | 不能；不进 Git |
 | 个人证件、成绩单、奖学金 | 不进入站点 | 不会暴露 |
 
 **没有“登录后才能看”的公网权限系统。** 只要内容在 GitHub Pages 上，拿到链接的人就能看；
@@ -64,6 +81,25 @@ Settings → Pages → Deploy from a branch → `main / (root)`。
 
 字段、示例、图片扩展和验证清单见 `content/README.md`。
 不需要构建，刷新即可。
+
+## OC 课程同步
+
+工作台新增 **OC** 标签页，只读读取：
+
+- 当前活跃课程（Canvas Courses）
+- 待办 / 截止（Canvas Todo）
+- 课程公告（Announcements）
+
+### 怎么连接
+
+1. 登录 https://oc.sjtu.edu.cn/
+2. 右上角 **Account / 账户 → Settings / 设置 → New Access Token / 新建访问令牌**
+3. 复制令牌，粘贴到工作台 OC 页，点 **保存并连接**
+
+**不要输入学校密码。** 令牌只保存在本机 workbench/oc.json（已在 .gitignore，静态服务也会拦截），
+网页只拿到课程/公告结果，不拿到令牌；GitHub 上看不到它。同步是**只读**的，不会提交作业或发公告。
+
+如果学校关闭了令牌入口，OC 同步就不可用；不会退回密码登录。
 
 ## 更新本地工作台
 

@@ -32,27 +32,37 @@ Full schema: content/README.md.
 
 ## Local workbench
 
-Start:
+No manual Python window is required on Windows: a Startup shortcut launches pythonw hidden at logon;
+start-workbench-hidden.bat starts it on demand. Manual fallback:
 
     python workbench/server.py
     # http://127.0.0.1:8765/workbench/
 
-Endpoints: /api/status, /api/files, /api/tools, /api/open, /api/reveal, /go/latex, /go/draw.
+Endpoints: /api/status, /api/files, /api/tools, /api/open, /api/reveal,
+/api/oc/status, /api/oc/data, /api/oc/config, /api/oc/sync, /api/oc/clear,
+/go/latex, /go/draw.
 Only 127.0.0.1. Private config workbench/private.json is gitignored and blocked from static access.
 Sensitive directories (个人文件, 奖学金, 身份证, 学历, 学位, 宿舍, 比赛) are excluded from scanning.
+
+## OC / Canvas (read-only)
+
+Use a Canvas personal access token (Account -> Settings -> New Access Token) in the OC tab.
+No school password is requested or stored. Token lives in workbench/oc.json (gitignored, static 404);
+cache lives in workbench/oc-cache.json. The server only calls https://oc.sjtu.edu.cn and never writes to Canvas.
+If the school disables token creation, OC sync is unavailable; there is no password fallback.
 
 ## Privacy
 
 - Public layer: safe to share; no private files, no LaTeX token, no unpublished data.
 - Private layer: local only; not reachable from GitHub Pages.
 - GitHub Pages cannot enforce per-user permissions. Real access control requires a backend.
-- Do not commit workbench/private.json or any personal documents.
+- Do not commit workbench/private.json, workbench/oc.json, oc-cache.json or any personal documents.
 
 ## Deployment
 
 Push the public layer to a GitHub Pages repository (recommended: xiaot310.github.io),
 Settings → Pages → Deploy from a branch → main / (root). Keep .nojekyll.
-Never upload private.json, personal files, or preview temp images.
+Never upload private.json, oc.json/oc-cache.json, personal files, or preview temp images.
 
 ## Read next
 

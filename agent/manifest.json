@@ -16,10 +16,26 @@
     "physics": "Canvas 2D + custom perspective projection in assets/js/ice-criteria.js"
   },
   "routes": [
-    { "path": "/", "file": "index.html", "purpose": "个人主页：研究、项目、工作台入口" },
-    { "path": "/lab/ice-failure/", "file": "lab/ice-failure/index.html", "purpose": "海冰失效交互演示" },
-    { "path": "/agent/", "file": "agent/index.html", "purpose": "AI 交接、内容规则、自检" },
-    { "path": "/workbench/", "file": "workbench/index.html", "purpose": "本地工作台；公开部署时降级为离线" }
+    {
+      "path": "/",
+      "file": "index.html",
+      "purpose": "个人主页：研究、项目、工作台入口"
+    },
+    {
+      "path": "/lab/ice-failure/",
+      "file": "lab/ice-failure/index.html",
+      "purpose": "海冰失效交互演示"
+    },
+    {
+      "path": "/agent/",
+      "file": "agent/index.html",
+      "purpose": "AI 交接、内容规则、自检"
+    },
+    {
+      "path": "/workbench/",
+      "file": "workbench/index.html",
+      "purpose": "本地工作台；公开部署时降级为离线"
+    }
   ],
   "content": {
     "source": "content/site-content.js",
@@ -48,6 +64,11 @@
       "GET /api/tools",
       "POST /api/open",
       "POST /api/reveal",
+      "GET /api/oc/status",
+      "GET /api/oc/data",
+      "POST /api/oc/config",
+      "POST /api/oc/sync",
+      "POST /api/oc/clear",
       "GET /go/latex",
       "GET /go/draw"
     ],
@@ -56,6 +77,24 @@
       "notes": "localStorage: xiaot.notes.v1",
       "sketch": "localStorage: xiaot.sketch.v1",
       "reading": "localStorage: xiaot.reading.v1"
+    },
+    "files": {
+      "page": "workbench/index.html",
+      "logic": "workbench/workbench.js",
+      "styles": "workbench/workbench.css",
+      "server": "workbench/server.py",
+      "oc": "workbench/oc_sync.py",
+      "privateConfig": "workbench/private.json",
+      "ocConfig": "workbench/oc.json",
+      "ocCache": "workbench/oc-cache.json"
+    },
+    "autoStart": "Windows Startup shortcut -> pythonw workbench/server.py --no-open (installed by install-autostart.bat)",
+    "oc": {
+      "mode": "Canvas personal access token, read-only",
+      "tokenFile": "workbench/oc.json",
+      "cacheFile": "workbench/oc-cache.json",
+      "passwordLogin": false,
+      "target": "https://oc.sjtu.edu.cn"
     }
   },
   "privateBoundary": {
@@ -70,7 +109,9 @@
       "宿舍",
       "比赛",
       "LaTeX token",
-      "未发表数据 / 审稿意见"
+      "未发表数据 / 审稿意见",
+      "workbench/oc.json",
+      "workbench/oc-cache.json"
     ],
     "excludedFromScan": [
       "个人文件",
@@ -111,6 +152,8 @@
     "静态托管不能做按人授权；需要登录时应另建后端",
     "工作台文件列表只显示最近 300 个，最多扫描 800 个、30 MB/文件",
     "海冰演示是教学可视化，不是工程仿真；三维是 σ3 切片",
-    "Agent 问答是关键词检索，不是大模型"
+    "Agent 问答是关键词检索，不是大模型",
+    "OC 同步只支持 Canvas 个人访问令牌，不接收/不保存学校密码；学校关闭令牌入口时不可用。",
+    "自动启动是 Windows 当前用户登录快捷方式，不是系统服务；换用户/换电脑需重设。"
   ]
 }

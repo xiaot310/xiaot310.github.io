@@ -38,6 +38,8 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, unquote, urlsplit
 
+import oc_sync
+
 # ---------------------------------------------------------------------------
 # 常量
 # ---------------------------------------------------------------------------
@@ -152,7 +154,11 @@ class ApiError(Exception):
 
 
 def _configure_stdio():
-    """统一输出为 UTF-8，避免 Windows 控制台/管道里的中文乱码或编码报错。"""
+    """统一输出为 UTF-8；pythonw 下 stdout/stderr 为 None，重定向到 devnull。"""
+    if sys.stdout is None:
+        sys.stdout = open(os.devnull, "w", encoding="utf-8")
+    if sys.stderr is None:
+        sys.stderr = open(os.devnull, "w", encoding="utf-8")
     for stream in (sys.stdout, sys.stderr):
         try:
             stream.reconfigure(encoding="utf-8", errors="replace")
@@ -686,6 +692,32 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                     self._api_tools()
                 return
 
+            # OC（Canvas）只读同步：令牌只在本机，不返回给页面
+            if route.startswith("/api/oc/"):
+                if route in ("/api/oc/status", "/api/oc/data"):
+                    if method not in ("GET", "HEAD"):
+                        self._json_method_not_allowed(["GET", "HEAD"])
+                        return
+                    if route == "/api/oc/status":
+                        self._send_json(200, oc_sync.status())
+                    else:
+                        self._send_json(200, oc_sync.cached_data())
+                    return
+                if route in ("/api/oc/config", "/api/oc/sync", "/api/oc/clear"):
+                    if method != "POST":
+                        self._json_method_not_allowed(["POST"])
+                        return
+                    body = self._read_json_body()
+                    if route == "/api/oc/config":
+                        self._send_json(200, oc_sync.configure(body))
+                    elif route == "/api/oc/sync":
+                        self._send_json(200, oc_sync.sync())
+                    else:
+                        self._send_json(200, oc_sync.clear())
+                    return
+                self._json_not_found()
+                return
+
             if route in ("/api/open", "/api/reveal"):
                 if method != "POST":
                     self._json_method_not_allowed(["POST"])
@@ -719,6 +751,8 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
                 return
             self._serve_static(parsed)
 
+        except oc_sync.OcError as exc:
+            self._send_json(exc.status, {"ok": False, "error": exc.message, "code": exc.code})
         except ApiError as exc:
             self._send_json(exc.status, {"ok": False, "error": exc.message, "code": exc.code}, exc.headers)
         except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
@@ -875,6 +909,15 @@ class WorkbenchHandler(BaseHTTPRequestHandler):
             return
         # 私有配置文件永远不通过静态服务暴露
         if os.path.normcase(real) == os.path.normcase(PRIVATE_JSON_REAL):
+            self._send_404()
+            return
+        oc_private = {
+            os.path.normcase(oc_sync.CONFIG_PATH),
+            os.path.normcase(oc_sync.CACHE_PATH),
+            os.path.normcase(oc_sync.CONFIG_PATH + ".tmp"),
+            os.path.normcase(oc_sync.CACHE_PATH + ".tmp"),
+        }
+        if os.path.normcase(real) in oc_private:
             self._send_404()
             return
         self._serve_file(real)

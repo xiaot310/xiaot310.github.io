@@ -79,7 +79,7 @@
   if ($('wbBrand')) $('wbBrand').textContent = S.brand || 'YITING ZHANG';
 
   /* ------------------------------------------------------------ tabs */
-  var TABS = ['today', 'plan', 'files', 'tools', 'literature', 'notes'];
+  var TABS = ['today', 'plan', 'files', 'tools', 'oc', 'literature', 'notes'];
   function activateTab(name, updateHash) {
     if (TABS.indexOf(name) === -1) name = 'today';
     TABS.forEach(function (t) {
@@ -92,6 +92,7 @@
       try { history.replaceState(null, '', '#' + name); } catch (e) { location.hash = name; }
     }
     if (name === 'files') loadFiles(fileQuery);
+    if (name === 'oc') loadOc();
     if (name === 'today') renderTodayRecent();
   }
   $$('#wbTabs a').forEach(function (a) {
@@ -259,9 +260,9 @@
   }
 
   /* ------------------------------------------------------------ API */
-  function apiFetch(path, options) {
+  function apiFetch(path, options, timeoutMs) {
     var ctrl = window.AbortController ? new AbortController() : null;
-    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 1800) : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, timeoutMs || 1800) : null;
     return fetch(path, Object.assign({ cache: 'no-store', signal: ctrl ? ctrl.signal : undefined }, options || {}))
       .then(function (r) {
         if (timer) clearTimeout(timer);
@@ -298,6 +299,18 @@
     if ($('todayLatex')) $('todayLatex').textContent = online && api.tools && api.tools.latex ? '已配置' : '未配置';
     $$('[data-open="latex"]').forEach(function (b) { b.disabled = !(online && api.tools && api.tools.latex); });
     if ($('openLatex')) $('openLatex').disabled = !(online && api.tools && api.tools.latex);
+    if (typeof setOcApiState === 'function') setOcApiState(online, false);
+  }
+  var apiRetryTimer = 0;
+  var isLocalHost = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+  function clearApiRetry() {
+    if (apiRetryTimer) { clearInterval(apiRetryTimer); apiRetryTimer = 0; }
+  }
+  function scheduleApiRetry() {
+    if (!isLocalHost || apiRetryTimer) return;
+    apiRetryTimer = setInterval(function () {
+      if (!api.online) checkApi();
+    }, 7000);
   }
   function checkApi() {
     if ($('apiBadgeText')) $('apiBadgeText').textContent = '检查中…';
@@ -310,10 +323,16 @@
         }).catch(function () { api.tools = null; setApiUI(true, status); });
       })
       .then(function () { return loadFiles(fileQuery); })
+      .then(function () {
+        clearApiRetry();
+        if ((location.hash || '').replace('#', '') === 'oc') loadOc();
+      })
       .catch(function () {
         setApiUI(false, null);
         renderFiles();
         renderTodayRecent();
+        if ((location.hash || '').replace('#', '') === 'oc') loadOc();
+        scheduleApiRetry();
       });
   }
 
@@ -748,6 +767,188 @@
     });
   }
   renderSources(); renderReading();
+
+
+  /* ------------------------------------------------------------ OC / Canvas */
+  var ocState = { configured: false, data: null, busy: false };
+
+  function ocEmpty(text) { return '<div class="oc-empty">' + esc(text) + '</div>'; }
+  function safeOcUrl(url) {
+    var u = String(url || '');
+    return /^https?:\/\//i.test(u) ? u : 'https://oc.sjtu.edu.cn/';
+  }
+  function fmtOcDate(value, withTime) {
+    if (!value) return '';
+    var d = new Date(value);
+    if (isNaN(d.getTime())) return String(value).slice(0, 16).replace('T', ' ');
+    var s = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    if (withTime) s += ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    return s;
+  }
+  function ocRole(role) {
+    return ({ teacher: '教师', ta: '助教', student: '学生' }[role] || role || '');
+  }
+  function setOcApiState(online, configured) {
+    var el = $('ocApi');
+    if (el) {
+      el.classList.toggle('online', !!online);
+      var s = el.querySelector('span:last-child');
+      if (s) s.textContent = online ? (configured ? '已连接 · 只读' : '本地服务在线') : '本地服务未连接';
+    }
+    if ($('btnOcSync')) $('btnOcSync').disabled = !online || !configured || ocState.busy;
+  }
+  function showOcSetup() {
+    ocState.configured = false;
+    if ($('ocSetup')) $('ocSetup').hidden = false;
+    if ($('ocMain')) $('ocMain').hidden = true;
+    if ($('ocOffline')) $('ocOffline').hidden = api.online;
+    setOcApiState(api.online, false);
+  }
+  function showOcMain() {
+    ocState.configured = true;
+    if ($('ocSetup')) $('ocSetup').hidden = true;
+    if ($('ocMain')) $('ocMain').hidden = false;
+    if ($('ocOffline')) $('ocOffline').hidden = true;
+    setOcApiState(api.online, true);
+  }
+  function renderOc(data) {
+    if (!data) return;
+    ocState.data = data;
+    var courses = data.courses || [];
+    var todos = data.todos || [];
+    var anns = data.announcements || [];
+    var nameById = {};
+    courses.forEach(function (c) { nameById[String(c.id)] = c.name; });
+    if ($('ocStatCourses')) $('ocStatCourses').textContent = String(courses.length).padStart(2, '0');
+    if ($('ocStatTodos')) $('ocStatTodos').textContent = String(todos.length).padStart(2, '0');
+    if ($('ocStatAnnouncements')) $('ocStatAnnouncements').textContent = String(anns.length).padStart(2, '0');
+    if ($('ocStatTime')) $('ocStatTime').textContent = fmtOcDate(data.syncedAt, false) || '—';
+    if ($('ocUser')) $('ocUser').textContent = data.userName ? data.userName : '本机令牌';
+    if ($('ocLastSync')) $('ocLastSync').textContent = data.syncedAt ? '上次同步：' + fmtOcDate(data.syncedAt, true) : '尚未同步';
+    if ($('tabOcCount')) $('tabOcCount').textContent = todos.length || '';
+    var now = Date.now();
+
+    var cBox = $('ocCourses');
+    if (cBox) {
+      cBox.innerHTML = courses.length ? courses.map(function (c) {
+        return '<a class="oc-row" href="' + esc(safeOcUrl(c.url)) + '" target="_blank" rel="noopener">' +
+          '<span class="oc-main"><b>' + esc(c.name) + '</b><small>' + esc([c.code, c.term, ocRole(c.role), c.teacher].filter(Boolean).join(' · ')) + '</small></span>' +
+          '<span class="oc-arrow">↗</span></a>';
+      }).join('') : ocEmpty('还没有读到课程。点“同步”重试。');
+    }
+    var tBox = $('ocTodos');
+    if (tBox) {
+      tBox.innerHTML = todos.length ? todos.map(function (t) {
+        var due = t.due ? new Date(t.due).getTime() : 0;
+        var late = due && due < now;
+        return '<a class="oc-row" href="' + esc(safeOcUrl(t.url)) + '" target="_blank" rel="noopener">' +
+          '<span class="oc-main"><b>' + esc(t.title) + '</b><small>' + esc(nameById[String(t.courseId)] || 'OC 待办') + '</small></span>' +
+          '<span class="oc-due' + (late ? ' late' : '') + '">' + esc(fmtOcDate(t.due, true) || '无截止') + '</span></a>';
+      }).join('') : ocEmpty('没有待办。');
+    }
+    var aBox = $('ocAnnouncements');
+    if (aBox) {
+      aBox.innerHTML = anns.length ? anns.map(function (a) {
+        return '<a class="oc-row" href="' + esc(safeOcUrl(a.url)) + '" target="_blank" rel="noopener">' +
+          '<span class="oc-main"><b>' + esc(a.title) + '</b><small>' + esc([a.course, a.author, fmtOcDate(a.postedAt, false)].filter(Boolean).join(' · ')) + '</small></span>' +
+          '<span class="oc-arrow">↗</span></a>';
+      }).join('') : ocEmpty('还没有读到公告。');
+    }
+  }
+  function loadOcData() {
+    return apiFetch('../api/oc/data', null, 5000)
+      .then(function (data) {
+        renderOc(data);
+        if (data && data.syncedAt) showOcMain();
+        return data;
+      })
+      .catch(function () { toast('OC 缓存读取失败'); });
+  }
+  function loadOc() {
+    if (!api.online) {
+      showOcSetup();
+      if ($('ocOffline')) $('ocOffline').hidden = false;
+      if ($('ocSetup')) $('ocSetup').hidden = true;
+      if ($('ocMain')) $('ocMain').hidden = true;
+      setOcApiState(false, false);
+      return Promise.resolve();
+    }
+    if ($('ocOffline')) $('ocOffline').hidden = true;
+    return apiFetch('../api/oc/status', null, 5000)
+      .then(function (st) {
+        if (!st || !st.configured) { showOcSetup(); return; }
+        showOcMain();
+        if ($('tabOcCount') && st.counts) $('tabOcCount').textContent = st.counts.todos || '';
+        return loadOcData().then(function (data) {
+          if (!data || !data.syncedAt) return syncOc(true);
+        });
+      })
+      .catch(function (err) {
+        showOcSetup();
+        toast('OC 状态读取失败：' + (err.message || '未知错误'));
+      });
+  }
+  function syncOc(silent) {
+    if (!api.online) { toast('先启动本地工作台'); return Promise.resolve(); }
+    if (!$('btnOcSync')) return Promise.resolve();
+    ocState.busy = true;
+    $('btnOcSync').disabled = true;
+    var old = $('btnOcSync').textContent;
+    $('btnOcSync').textContent = '同步中…';
+    return apiFetch('../api/oc/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }, 60000)
+      .then(function (data) {
+        renderOc(data);
+        showOcMain();
+        if (!silent) toast('OC 已同步');
+      })
+      .catch(function (err) {
+        if (!silent) toast('OC 同步失败：' + (err.message || '未知错误'));
+        if (String(err.message || '').indexOf('令牌') !== -1) showOcSetup();
+      })
+      .then(function () {
+        ocState.busy = false;
+        $('btnOcSync').textContent = old;
+        setOcApiState(api.online, ocState.configured);
+      });
+  }
+  function connectOc() {
+    var token = ($('ocToken') && $('ocToken').value || '').trim();
+    if (token.length < 20) { toast('请粘贴完整的 OC 访问令牌'); return; }
+    var btn = $('btnOcConnect');
+    if (btn) { btn.disabled = true; btn.textContent = '验证中…'; }
+    apiFetch('../api/oc/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token, baseUrl: ($('ocBase') && $('ocBase').value) || 'https://oc.sjtu.edu.cn' })
+    }, 45000)
+      .then(function (st) {
+        if ($('ocToken')) $('ocToken').value = '';
+        if (!st || !st.configured) throw new Error('令牌没有保存');
+        showOcMain();
+        toast('OC 令牌已保存，开始同步');
+        return syncOc(true);
+      })
+      .catch(function (err) {
+        toast('连接失败：' + (err.message || '未知错误'));
+      })
+      .then(function () {
+        if (btn) { btn.disabled = false; btn.textContent = '保存并连接'; }
+      });
+  }
+  function clearOc() {
+    if (!confirm('断开 OC 并删除本机保存的令牌？')) return;
+    apiFetch('../api/oc/clear', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }, 5000)
+      .then(function () {
+        ocState.data = null;
+        if ($('ocToken')) $('ocToken').value = '';
+        showOcSetup();
+        toast('已清除本机 OC 令牌');
+      })
+      .catch(function (err) { toast('清除失败：' + (err.message || '未知错误')); });
+  }
+  if ($('btnOcConnect')) $('btnOcConnect').addEventListener('click', connectOc);
+  if ($('btnOcSync')) $('btnOcSync').addEventListener('click', function () { syncOc(false); });
+  if ($('btnOcClear')) $('btnOcClear').addEventListener('click', clearOc);
 
   /* ------------------------------------------------------------ 初始化 */
   activateTab((location.hash || '#today').slice(1), false);

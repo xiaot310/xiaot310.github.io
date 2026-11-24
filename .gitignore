@@ -1,5 +1,8 @@
 # 本地私有配置：包含 LaTeX 私密链接，绝对不要提交
 workbench/private.json
+workbench/oc.json
+workbench/oc-cache.json
+workbench/oc*.tmp
 workbench/data/
 
 # 部署 / 临时产物

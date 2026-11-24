@@ -169,7 +169,7 @@
       .slice(0, 2);
     if (!ranked.length) {
       setTimeout(function () {
-        addMsg('ai', '没有找到直接匹配', '这份检索只覆盖交接文档的 12 个条目。可以改问：怎么加项目卡、private.json 会不会上传、工作台怎么启动、怎么部署。');
+        addMsg('ai', '没有找到直接匹配', '这份检索只覆盖交接文档的知识条目。可以改问：怎么加项目卡、private.json 会不会上传、工作台怎么启动、OC 怎么同步、怎么部署。');
       }, 120);
       return;
     }

@@ -52,7 +52,7 @@
     </div>
     <div class="hero-stats">
       <div class="hs"><span>Content source</span><b>1 个数据文件</b></div>
-      <div class="hs"><span>Local API</span><b>7 个端点</b></div>
+      <div class="hs"><span>Local API</span><b>12 个端点</b></div>
       <div class="hs"><span>Private config</span><b>不进 Git</b></div>
       <div class="hs hs-check"><span>Self-check</span><b id="checkSummaryTop">未运行</b><button class="mini-btn" type="button" id="runCheckTop">运行</button></div>
     </div>
@@ -104,7 +104,7 @@
           <div class="arch-row">
             <div class="arch-box"><span>PUBLIC</span><b>GitHub Pages</b><small>index.html / lab / agent / content<br>纯静态、零依赖、可分享</small></div>
             <div class="arch-arrow">+</div>
-            <div class="arch-box"><span>LOCAL</span><b>127.0.0.1:8765</b><small>workbench/server.py<br>文件 / LaTeX / 计划 / 笔记 / 手绘</small></div>
+            <div class="arch-box"><span>LOCAL</span><b>127.0.0.1:8765</b><small>workbench/server.py<br>文件 / LaTeX / OC / 计划 / 笔记 / 手绘</small></div>
           </div>
           <div class="arch-row">
             <div class="arch-box"><span>PRIVATE CONFIG</span><b>workbench/private.json</b><small>研究根路径、LaTeX 私链、排除名单；.gitignore 排除</small></div>
@@ -189,6 +189,11 @@ python workbench/server.py
         <div class="recipe">
           <h3>安全底线</h3>
           <p>只绑 <code>127.0.0.1</code>；<code>private.json</code> 静态访问返回 404；<code>POST</code> 只接受同源 JSON；拒绝 <code>..</code> 越界、敏感目录和私链文件；默认排除个人文件、奖学金、身份证、学历、学位、宿舍、比赛。</p>
+        </div>
+        <div class="recipe" style="margin-top:18px">
+          <h3>两个新增点</h3>
+          <p><b>不用开 Python：</b>Windows 登录时用后台快捷方式启动；也可双击 start-workbench-hidden.bat。网页本身没有权限启动本地程序。</p>
+          <p><b>OC 只读同步：</b>用 Canvas 个人访问令牌读取课程、Todo 和公告；不接收学校密码。令牌只在本机 workbench/oc.json，静态访问 404。</p>
         </div>
         <p class="doc-lede" style="margin-top:14px">启动参数、配置字段、备份与常见问题见 <a href="../workbench/README.md">workbench/README.md</a>。</p>
       </section>

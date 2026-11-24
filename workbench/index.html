@@ -38,6 +38,7 @@
   <a href="#plan" data-tab="plan">计划 <span id="tabTaskCount"></span></a>
   <a href="#files" data-tab="files">文件 <span id="tabFileCount"></span></a>
   <a href="#tools" data-tab="tools">工具</a>
+  <a href="#oc" data-tab="oc">OC <span id="tabOcCount"></span></a>
   <a href="#literature" data-tab="literature">文献</a>
   <a href="#notes" data-tab="notes">笔记</a>
   <span class="wb-tabs-note">本地优先 · 私有文件不上传</span>
@@ -84,6 +85,7 @@
           <a class="qa" href="#files"><span class="qa-i">▤</span><b>最近文件</b><small>论文 / 项目</small></a>
           <a class="qa" href="#tools"><span class="qa-i">✎</span><b>画图</b><small>draw.io / 手绘</small></a>
           <a class="qa" href="#literature"><span class="qa-i">⌕</span><b>查文献</b><small>Scholar / arXiv</small></a>
+          <a class="qa qa-wide" href="#oc"><span class="qa-i">◎</span><b>OC 课程</b><small>课程 / 待办 / 公告</small></a>
         </div>
         <div class="wb-mini-block">
           <div class="mini-row"><span>本地服务</span><b id="todayApi">未连接</b></div>
@@ -211,6 +213,70 @@
       </div>
       <canvas id="sketch" width="1200" height="620" aria-label="手绘板"></canvas>
     </section>
+  </section>
+
+
+  <!-- ================= OC ================= -->
+  <section class="wb-panel" id="panel-oc" data-panel="oc" hidden>
+    <div class="wb-section-head">
+      <div>
+        <p class="wb-kicker">OC / CANVAS</p>
+        <h2>OC 课程同步</h2>
+        <p>把 OC 上的课程、待办截止和课程公告收进工作台。只读同步，不会替你提交作业或发布内容。</p>
+      </div>
+      <div class="wb-head-actions">
+        <span class="wb-api small" id="ocApi"><i class="status-dot"></i><span>检查中</span></span>
+        <a class="wb-btn" href="https://oc.sjtu.edu.cn/" target="_blank" rel="noopener">打开 OC ↗</a>
+        <button type="button" class="wb-ghost" id="btnOcSync">同步</button>
+      </div>
+    </div>
+
+    <div class="local-banner" id="ocOffline" hidden>
+      <div><b>OC 同步需要本地服务</b><span>课程数据由本机 Python 服务读取，令牌不出本机。请确认工作台已启动。</span></div>
+    </div>
+
+    <div class="oc-setup" id="ocSetup">
+      <div class="oc-security">
+        <b>不需要也不能输入学校密码。</b>
+        <span>请在 OC 里创建一个 Canvas 个人访问令牌，粘贴到这里。令牌只保存在本机 <code>workbench/oc.json</code>，公开站点和 GitHub 都看不到；网页只显示同步结果。</span>
+      </div>
+      <div class="oc-form">
+        <label>OC 地址<input id="ocBase" type="url" value="https://oc.sjtu.edu.cn" readonly></label>
+        <label>Canvas 访问令牌<input id="ocToken" type="password" placeholder="粘贴 New Access Token" autocomplete="off" spellcheck="false"></label>
+        <button type="button" class="wb-btn primary" id="btnOcConnect">保存并连接</button>
+        <a class="oc-help" href="https://oc.sjtu.edu.cn/profile/settings" target="_blank" rel="noopener">如何在 OC 创建令牌 ↗</a>
+      </div>
+      <p class="oc-hint">路径：登录 OC → Account / 账户 → Settings / 设置 → New Access Token / 新建访问令牌。若学校关闭了令牌入口，就不能同步，页面不会要求你输入密码。</p>
+    </div>
+
+    <div id="ocMain" hidden>
+      <div class="oc-stats">
+        <div class="oc-stat"><span>课程</span><b id="ocStatCourses">—</b><small>当前学期 / 全部活跃</small></div>
+        <div class="oc-stat"><span>待办</span><b id="ocStatTodos">—</b><small>Canvas todo</small></div>
+        <div class="oc-stat"><span>公告</span><b id="ocStatAnnouncements">—</b><small>最近课程公告</small></div>
+        <div class="oc-stat"><span>上次同步</span><b id="ocStatTime">—</b><small id="ocUser">本机令牌</small></div>
+      </div>
+
+      <div class="oc-grid">
+        <section class="wb-card">
+          <div class="wb-card-head"><h2>我的课程</h2><span class="wb-mini">只读</span></div>
+          <div class="oc-list" id="ocCourses"></div>
+        </section>
+        <section class="wb-card">
+          <div class="wb-card-head"><h2>待办 / 截止</h2><span class="wb-mini">按截止时间</span></div>
+          <div class="oc-list" id="ocTodos"></div>
+        </section>
+        <section class="wb-card">
+          <div class="wb-card-head"><h2>课程公告</h2><span class="wb-mini">最近发布</span></div>
+          <div class="oc-list" id="ocAnnouncements"></div>
+        </section>
+      </div>
+
+      <div class="oc-footer">
+        <span id="ocLastSync">尚未同步</span>
+        <button type="button" class="wb-ghost" id="btnOcClear">断开并清除本机令牌</button>
+      </div>
+    </div>
   </section>
 
   <!-- ================= literature ================= -->
